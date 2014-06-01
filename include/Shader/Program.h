@@ -16,7 +16,6 @@ protected:
 public:
 
 	Program();
-	virtual ~Program();
 
 	void attach(HandleType extHandle);
 	void attach(const Shader &shader);
