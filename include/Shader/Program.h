@@ -7,7 +7,8 @@ namespace Shader {
 
 struct Program : public GLHandle {
 	typedef GLHandle Super;
-public:
+
+protected:
 	//all attached shaders 
 	std::list<Shader> attached;
 public:

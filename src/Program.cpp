@@ -11,6 +11,7 @@ Program::Program(const Program &program) {
 
 Program &Program::operator=(const Program &program) {
 	contents = program.contents;
+	attached = program.attached;
 	return *this;
 }
 
@@ -24,7 +25,7 @@ Program::Program(std::vector<Shader> &shaders) {
 
 Program &Program::attach(const Shader &shader) {
 	glAttachObjectARB((*this)(), shader());
-	//attached.push_back(shader);
+	attached.push_back(shader);
 	return *this;
 }
 
