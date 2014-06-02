@@ -59,5 +59,28 @@ std::string Program::getAllLogs() {
 	return log;
 }
 
+int Program::getUniformLocation(std::string name) {
+	return glGetUniformLocationARB(handle, name.c_str());
+}
+
+
+template<>
+void Program::setUniform<int>(std::string name, int value) {
+	use();
+	glUniform1iARB(getUniformLocation(name), value);
+}
+
+template<>
+void Program::setUniform<float>(std::string name, float value) {
+	use();
+	glUniform1fARB(getUniformLocation(name), value);
+}
+
+template<>
+void Program::setUniform<float>(std::string name, float value1, float value2) {
+	use();
+	glUniform2fARB(getUniformLocation(name), value1, value2);
+}
+
 };
 

@@ -35,19 +35,10 @@ public:
 
 	template<typename T>
 	void setUniform(std::string name, T value);
+	
+	template<typename T>
+	void setUniform(std::string name, T value1, T value2);
 };
-
-template<>
-void Program::setUniform<int>(std::string name, int value) {
-	use();
-	glUniform1iARB(getUniformLocation(name), value);
-}
-
-template<>
-void Program::setUniform<float>(std::string name, float value) {
-	use();
-	glUniform1fARB(getUniformLocation(name), value);
-}
 
 };
 
