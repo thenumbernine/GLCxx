@@ -3,83 +3,88 @@
 
 namespace Shader {
 
-Program::Program() {
-	handle = glCreateProgramObjectARB();
+Program::Program() {}
+
+Program::Program(const Program &program) {
+	this->operator=(program);
 }
 
-void Program::attach(HandleType extHandle) {
-	glAttachObjectARB(handle, extHandle);
-	attachedHandles.push_back(extHandle);
+Program &Program::operator=(const Program &program) {
+	contents = program.contents;
+	return *this;
 }
 
-void Program::attach(const Shader &shader) {
-	glAttachObjectARB(handle, shader.getHandle());
-	attachedHandles.push_back(shader.getHandle());
+Program::Program(std::vector<Shader> &shaders) {
+	contents = std::make_shared<Contents>(glCreateProgramObjectARB());
+	for (Shader &shader : shaders) {
+		attach(shader);
+	}
+	link();
 }
 
-void Program::link() {
-	glLinkProgramARB(handle);
+Program &Program::attach(const Shader &shader) {
+	glAttachObjectARB((*this)(), shader());
+	//attached.push_back(shader);
+	return *this;
+}
+
+Program &Program::link() {
+	glLinkProgramARB((*this)());
 	GLint linked = 0;
-	glGetObjectParameterivARB(handle, GL_OBJECT_LINK_STATUS_ARB, &linked);
+	glGetObjectParameterivARB((*this)(), GL_OBJECT_LINK_STATUS_ARB, &linked);
 	if (!linked) {
 		throw Common::Exception() << "failed to link program.\n"
 			<< getAllLogs();
 	}
+	return *this;
 }
 
-void Program::use() {
-	glUseProgramObjectARB(handle);
+std::string Program::getAllLogs() {
+	std::string log;
+	for (Shader &shader : attached) {
+		log += getLog(shader());
+	}
+	log += getLog((*this)());
+	return log;
+}
+
+Program &Program::use() {
+	glUseProgramObjectARB((*this)());
+	return *this;
+}
+
+Program &Program::done() {
+	Program::useNone();
+	return *this;
 }
 
 void Program::useNone() {
 	glUseProgramObjectARB(0);
 }
 
-void Program::attachShader(std::string filename, int shaderType, std::string prefix) {
-	std::shared_ptr<Shader> shader = std::make_shared<Shader>(shaderType);
-	shader->createFromSource(filename, prefix);
-	ownedShaders.push_back(shader);
-	attach(shader->getHandle());
-}
-
-void Program::attachVertexShader(std::string filename, std::string prefix)	{
-	attachShader(filename, GL_VERTEX_SHADER_ARB, prefix);
-}
-
-void Program::attachFragmentShader(std::string filename, std::string prefix) {
-	attachShader(filename, GL_FRAGMENT_SHADER_ARB, prefix);
-}
-
-std::string Program::getAllLogs() {
-	std::string log;
-	for (HandleType handle : attachedHandles) {
-		log += getLog(handle);
-	}
-	log += getLog(handle);
-	return log;
-}
-
 int Program::getUniformLocation(std::string name) {
-	return glGetUniformLocationARB(handle, name.c_str());
+	return glGetUniformLocationARB((*this)(), name.c_str());
 }
-
 
 template<>
-void Program::setUniform<int>(std::string name, int value) {
+Program &Program::setUniform<int>(std::string name, int value) {
 	use();
 	glUniform1iARB(getUniformLocation(name), value);
+	return *this;
 }
 
 template<>
-void Program::setUniform<float>(std::string name, float value) {
+Program &Program::setUniform<float>(std::string name, float value) {
 	use();
 	glUniform1fARB(getUniformLocation(name), value);
+	return *this;
 }
 
 template<>
-void Program::setUniform<float>(std::string name, float value1, float value2) {
+Program &Program::setUniform<float>(std::string name, float value1, float value2) {
 	use();
 	glUniform2fARB(getUniformLocation(name), value1, value2);
+	return *this;
 }
 
 };

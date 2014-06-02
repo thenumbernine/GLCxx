@@ -1,36 +1,52 @@
 #pragma once
 
 #include "Shader/GLHandle.h"
+#include <vector>
 #include <string>
 
 namespace Shader {
 
-class Shader : public GLHandle {
+struct Shader : public GLHandle {
 	typedef GLHandle Super;
-public:
 
+	Shader();
+	Shader(const Shader &shader);
+	Shader &operator=(const Shader &shader);
+	
+	//create an uncompiled, uninitialized shader handle
 	Shader(int shaderType);
 
-	void setSource(std::string source);
-	void compile();
+	//add a source to the shader
+	virtual Shader &setSources(const std::vector<std::string> &sources);
+	
+	//compile the shader
+	virtual Shader &compile();
 
-	void createFromSource(
-		std::string filename, 
-		std::string prefix = std::string());
-
+	//return the name for which type of shader
 	static std::string nameForType(int shaderType);
 };
 
 template<int shaderType>
-class ShaderType : public Shader {
+struct ShaderType : public Shader {
 	typedef Shader Super;
-public:
-	ShaderType()
-	: Super(shaderType)
-	{}
 	
-	void createFromSource(std::string filename, std::string prefix = std::string()) {
-		Super::createFromSource(filename, shaderType, prefix);
+	ShaderType() {}
+
+	ShaderType(const ShaderType &shader) {
+		this->operator=(shader);
+	}
+	
+	ShaderType &operator=(const ShaderType &shader) {
+		contents = shader.contents;
+		return *this;
+	}
+
+	//create a shader of the specified type with the specified sources and compile it
+	ShaderType(const std::vector<std::string> &sources) 
+	: Super(shaderType)
+	{
+		setSources(sources);
+		compile();
 	}
 };
 

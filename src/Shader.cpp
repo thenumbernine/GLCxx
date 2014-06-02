@@ -1,34 +1,41 @@
 #include "Shader/Shader.h"
 #include "Common/Macros.h"
-#include "Common/File.h"
 #include <string>
 #include <sstream>
 
 namespace Shader {
 
+Shader::Shader() {}
+
+Shader::Shader(const Shader &shader) {
+	this->operator=(shader);
+}
+
+Shader &Shader::operator=(const Shader &shader) {
+	contents = shader.contents;
+	return *this;
+}
+
 Shader::Shader(int shaderType)
-: Super()
+: Super(glCreateShaderObjectARB(shaderType))
 {
-	handle = glCreateShaderObjectARB(shaderType);
 }
 
-void Shader::setSource(std::string source) {
-	const char *sources[] = {source.c_str()};
-	glShaderSourceARB(handle, numberof(sources), sources, NULL);
+Shader &Shader::setSources(const std::vector<std::string> &sources) {
+	std::vector<const GLcharARB*> szsources(sources.size());
+	std::vector<GLint> lengths(sources.size());
+	for (int i = 0; i < sources.size(); ++i) {
+		szsources[i] = sources[i].c_str();
+		lengths[i] = sources[i].length();
+	}
+	glShaderSourceARB((*this)(), szsources.size(), &szsources[0], &lengths[0]);
+	return *this;
 }
 
-void Shader::compile() {
-	glCompileShaderARB(handle);
+Shader &Shader::compile() {
+	glCompileShaderARB((*this)());
+	return *this;
 }
-
-void Shader::createFromSource(std::string filename, std::string prefix) {
-	std::ostringstream s;
-	if (!prefix.empty()) s << prefix;
-	if (!filename.empty()) s << Common::File::read(filename);
-	setSource(s.str());
-	compile();
-}
-
 
 std::string Shader::nameForType(int shaderType) {
 	switch (shaderType) {

@@ -5,39 +5,43 @@
 
 namespace Shader {
 
-class Program : public GLHandle {
-protected:
-	//only the shaders owned by this object -- used via attachVertexShader/attachFragmentShader
-	std::list<std::shared_ptr<Shader>> ownedShaders;
-	
-	//all attached shaders -- used for logging
-	// you can even attach other shaders via attach() and they end up here
-	std::list<HandleType> attachedHandles;
+struct Program : public GLHandle {
+	typedef GLHandle Super;
 public:
-
+	//all attached shaders 
+	std::list<Shader> attached;
+public:
+	
 	Program();
+	Program(const Program &program);
+	Program &operator=(const Program &program);
 
-	void attach(HandleType extHandle);
-	void attach(const Shader &shader);
+	Program(std::vector<Shader> &shaders);
+	
+	Program &attach(const Shader &shader);
+	Program &link();
 
-	void attachShader(std::string filename, int shaderType, std::string prefix = std::string());
-	void attachVertexShader(std::string filename, std::string prefix = std::string());
-	void attachFragmentShader(std::string filename, std::string prefix = std::string());
-
-	void link();
+	template<int shaderType>
+	Program &attachShader(std::vector<std::string> &sources) {
+		ShaderType<shaderType> shader;
+		shader.setSources(sources);
+		attach(shader);
+		return *this;
+	}
 
 	std::string getAllLogs();
 
-	void use();
+	Program &use();
+	Program &done();	//useNone for this.  had to think of a clever new name.
 	static void useNone();
 
 	int getUniformLocation(std::string name);
 
 	template<typename T>
-	void setUniform(std::string name, T value);
+	Program &setUniform(std::string name, T value);
 	
 	template<typename T>
-	void setUniform(std::string name, T value1, T value2);
+	Program &setUniform(std::string name, T value1, T value2);
 };
 
 };
