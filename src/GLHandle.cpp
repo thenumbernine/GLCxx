@@ -17,7 +17,7 @@ std::string GLHandle::getLog(HandleType handle) {
 	glGetObjectParameterivARB(handle, GL_OBJECT_INFO_LOG_LENGTH_ARB, &length);
 	if (length <= 0) return std::string();
 
-	std::vector<GLcharARB> log;
+	std::vector<GLcharARB> log(length);
 	GLsizei written  = 0;
 	glGetInfoLogARB(handle, length, &written, &log[0]);
 
