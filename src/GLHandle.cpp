@@ -10,11 +10,11 @@ GLHandle::GLHandle(HandleType handleContents)
 : contents(std::make_shared<Contents>(handleContents))
 {}
 
-GLHandle::GLHandle(const GLHandle &handle) {
+GLHandle::GLHandle(const GLHandle& handle) {
 	this->operator=(handle);
 }
 
-GLHandle &GLHandle::operator=(const GLHandle &handle) {
+GLHandle& GLHandle::operator=(const GLHandle& handle) {
 	contents = handle.contents;
 	return *this;
 }
@@ -30,7 +30,7 @@ GLHandle::HandleType GLHandle::operator()() const {
 std::string GLHandle::getLog(HandleType handle) {
 
 	GLint length = 0;
-	glGetObjectParameterivARB(handle, GL_OBJECT_INFO_LOG_LENGTH_ARB, &length);
+	glGetObjectParameterivARB(handle, GL_OBJECT_INFO_LOG_LENGTH_ARB,& length);
 	if (length <= 0) return std::string();
 
 	std::vector<GLcharARB> log(length);

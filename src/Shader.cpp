@@ -7,11 +7,11 @@ namespace Shader {
 
 Shader::Shader() {}
 
-Shader::Shader(const Shader &shader) {
+Shader::Shader(const Shader& shader) {
 	this->operator=(shader);
 }
 
-Shader &Shader::operator=(const Shader &shader) {
+Shader& Shader::operator=(const Shader& shader) {
 	contents = shader.contents;
 	return *this;
 }
@@ -21,7 +21,7 @@ Shader::Shader(int shaderType)
 {
 }
 
-Shader &Shader::setSources(const std::vector<std::string> &sources) {
+Shader& Shader::setSources(const std::vector<std::string>& sources) {
 	std::vector<const GLcharARB*> szsources(sources.size());
 	std::vector<GLint> lengths(sources.size());
 	for (int i = 0; i < sources.size(); ++i) {
@@ -32,7 +32,7 @@ Shader &Shader::setSources(const std::vector<std::string> &sources) {
 	return *this;
 }
 
-Shader &Shader::compile() {
+Shader& Shader::compile() {
 	glCompileShaderARB((*this)());
 	return *this;
 }

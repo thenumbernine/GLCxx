@@ -14,16 +14,16 @@ protected:
 public:
 	
 	Program();
-	Program(const Program &program);
-	Program &operator=(const Program &program);
+	Program(const Program& program);
+	Program& operator=(const Program& program);
 
-	Program(std::vector<Shader> &shaders);
+	Program(std::vector<Shader>& shaders);
 	
-	Program &attach(const Shader &shader);
-	Program &link();
+	Program& attach(const Shader& shader);
+	Program& link();
 
 	template<int shaderType>
-	Program &attachShader(std::vector<std::string> &sources) {
+	Program& attachShader(std::vector<std::string>& sources) {
 		ShaderType<shaderType> shader;
 		shader.setSources(sources);
 		attach(shader);
@@ -32,17 +32,17 @@ public:
 
 	std::string getAllLogs();
 
-	Program &use();
-	Program &done();	//useNone for this.  had to think of a clever new name.
+	Program& use();
+	Program& done();	//useNone for this.  had to think of a clever new name.
 	static void useNone();
 
-	int getUniformLocation(std::string name);
+	int getUniformLocation(const std::string& name);
 
 	template<typename T>
-	Program &setUniform(std::string name, T value);
+	Program& setUniform(const std::string& name, T value);
 	
 	template<typename T>
-	Program &setUniform(std::string name, T value1, T value2);
+	Program& setUniform(const std::string& name, T value1, T value2);
 };
 
 };

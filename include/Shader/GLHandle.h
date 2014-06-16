@@ -28,9 +28,9 @@ protected:
 public:
 	GLHandle();
 	GLHandle(HandleType handleContents);
-	GLHandle(const GLHandle &handle);
+	GLHandle(const GLHandle& handle);
 	
-	GLHandle &operator=(const GLHandle &handle);
+	GLHandle& operator=(const GLHandle& handle);
 	virtual ~GLHandle();
 
 	HandleType operator()() const;
