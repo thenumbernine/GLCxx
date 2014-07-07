@@ -88,5 +88,13 @@ Program& Program::setUniform<float>(const std::string& name, float value1, float
 	return *this;
 }
 
+template<>
+Program& Program::setUniform<float>(const std::string& name, float value1, float value2, float value3) {
+	use();
+	glUniform3fARB(getUniformLocation(name), value1, value2, value3);
+	return *this;
+}
+
+
 };
 

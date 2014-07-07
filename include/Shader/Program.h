@@ -38,11 +38,9 @@ public:
 
 	int getUniformLocation(const std::string& name);
 
-	template<typename T>
-	Program& setUniform(const std::string& name, T value);
-	
-	template<typename T>
-	Program& setUniform(const std::string& name, T value1, T value2);
+	template<typename T> Program& setUniform(const std::string& name, T value);
+	template<typename T> Program& setUniform(const std::string& name, T value1, T value2);
+	template<typename T> Program& setUniform(const std::string& name, T value1, T value2, T value3);
 };
 
 };
