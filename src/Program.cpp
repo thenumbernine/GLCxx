@@ -75,6 +75,13 @@ Program& Program::setUniform<int>(const std::string& name, int value) {
 }
 
 template<>
+Program& Program::setUniform<bool>(const std::string& name, bool value) {
+	use();
+	glUniform1iARB(getUniformLocation(name), value);
+	return *this;
+}
+
+template<>
 Program& Program::setUniform<float>(const std::string& name, float value) {
 	use();
 	glUniform1fARB(getUniformLocation(name), value);
