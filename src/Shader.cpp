@@ -24,7 +24,7 @@ Shader::Shader(int shaderType)
 Shader& Shader::setSources(const std::vector<std::string>& sources) {
 	std::vector<const GLcharARB*> szsources(sources.size());
 	std::vector<GLint> lengths(sources.size());
-	for (int i = 0; i < sources.size(); ++i) {
+	for (int i = 0; i < (int)sources.size(); ++i) {
 		szsources[i] = sources[i].c_str();
 		lengths[i] = sources[i].length();
 	}

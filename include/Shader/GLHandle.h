@@ -1,8 +1,15 @@
 #pragma once
 
+#ifdef MACOSX
 #include <OpenGL/OpenGL.h>
 #include <OpenGL/glext.h>
+#else
+#define GL_GLEXT_PROTOTYPES
+#include <GL/gl.h>
+#include <GL/glext.h>
+#endif
 #include <string>
+#include <memory>
 
 namespace Shader {
 
@@ -38,4 +45,3 @@ public:
 };
 
 };
-
