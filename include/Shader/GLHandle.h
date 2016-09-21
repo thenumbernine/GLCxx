@@ -1,13 +1,6 @@
 #pragma once
 
-#ifdef MACOSX
-#include <OpenGL/OpenGL.h>
-#include <OpenGL/glext.h>
-#else
-#define GL_GLEXT_PROTOTYPES
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
+#include "Common/gl.h"
 #include <string>
 #include <memory>
 
@@ -44,4 +37,4 @@ public:
 	static std::string getLog(HandleType handle);
 };
 
-};
+}
