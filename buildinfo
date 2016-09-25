@@ -1,0 +1,3 @@
+distName='Shader'
+distType='lib'
+depends:append{'../Common'}
