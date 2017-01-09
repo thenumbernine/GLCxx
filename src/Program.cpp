@@ -16,7 +16,7 @@ Program& Program::operator=(const Program& program) {
 }
 
 Program::Program(std::vector<Shader>& shaders) {
-	contents = std::make_shared<Contents>(glCreateProgramObjectARB());
+	contents = std::make_shared<Contents>(glCreateProgram());
 	for (Shader& shader : shaders) {
 		attach(shader);
 	}
@@ -24,33 +24,27 @@ Program::Program(std::vector<Shader>& shaders) {
 }
 
 Program& Program::attach(const Shader& shader) {
-	glAttachObjectARB((*this)(), shader());
+	glAttachShader((*this)(), shader());
 	attached.push_back(shader);
 	return *this;
 }
 
 Program& Program::link() {
-	glLinkProgramARB((*this)());
+	glLinkProgram((*this)());
+	
 	GLint linked = 0;
-	glGetObjectParameterivARB((*this)(), GL_OBJECT_LINK_STATUS_ARB, &linked);
+	glGetProgramiv((*this)(), GL_LINK_STATUS, (int*)&linked);
 	if (!linked) {
-		throw Common::Exception() << "failed to link program.\n"
-			<< getAllLogs();
+		throw Common::Exception() << "failed to link program.\n" << getLog();
+	}
+	for (Shader& shader : attached) {
+		glDetachShader((*this)(), shader());
 	}
 	return *this;
 }
 
-std::string Program::getAllLogs() {
-	std::string log;
-	for (Shader& shader : attached) {
-		log += getLog(shader());
-	}
-	log += getLog((*this)());
-	return log;
-}
-
 Program& Program::use() {
-	glUseProgramObjectARB((*this)());
+	glUseProgram((*this)());
 	return *this;
 }
 
@@ -60,48 +54,46 @@ Program& Program::done() {
 }
 
 void Program::useNone() {
-	glUseProgramObjectARB(0);
+	glUseProgram(0);
 }
 
 int Program::getUniformLocation(const std::string& name) {
-	return glGetUniformLocationARB((*this)(), name.c_str());
+	return glGetUniformLocation((*this)(), name.c_str());
 }
 
 template<>
 Program& Program::setUniform<int>(const std::string& name, int value) {
 	use();
-	glUniform1iARB(getUniformLocation(name), value);
+	glUniform1i(getUniformLocation(name), value);
 	return *this;
 }
 
 template<>
 Program& Program::setUniform<bool>(const std::string& name, bool value) {
 	use();
-	glUniform1iARB(getUniformLocation(name), value);
+	glUniform1i(getUniformLocation(name), value);
 	return *this;
 }
 
 template<>
 Program& Program::setUniform<float>(const std::string& name, float value) {
 	use();
-	glUniform1fARB(getUniformLocation(name), value);
+	glUniform1f(getUniformLocation(name), value);
 	return *this;
 }
 
 template<>
 Program& Program::setUniform<float>(const std::string& name, float value1, float value2) {
 	use();
-	glUniform2fARB(getUniformLocation(name), value1, value2);
+	glUniform2f(getUniformLocation(name), value1, value2);
 	return *this;
 }
 
 template<>
 Program& Program::setUniform<float>(const std::string& name, float value1, float value2, float value3) {
 	use();
-	glUniform3fARB(getUniformLocation(name), value1, value2, value3);
+	glUniform3f(getUniformLocation(name), value1, value2, value3);
 	return *this;
 }
 
-
 };
-

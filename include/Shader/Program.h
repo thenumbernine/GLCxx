@@ -5,8 +5,12 @@
 
 namespace Shader {
 
-struct Program : public GLHandle {
-	typedef GLHandle Super;
+struct Program : public Wrapper<
+	glGetProgramiv,
+	glGetProgramInfoLog,
+	glDeleteProgram
+> {
+	typedef Wrapper Super;
 
 protected:
 	//all attached shaders 
@@ -30,8 +34,6 @@ public:
 		return *this;
 	}
 
-	std::string getAllLogs();
-
 	Program& use();
 	Program& done();	//useNone for this.  had to think of a clever new name.
 	static void useNone();
@@ -44,4 +46,3 @@ public:
 };
 
 };
-

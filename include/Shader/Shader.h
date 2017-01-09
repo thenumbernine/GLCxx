@@ -1,13 +1,17 @@
 #pragma once
 
-#include "Shader/GLHandle.h"
+#include "Shader/Wrapper.h"
 #include <vector>
 #include <string>
 
 namespace Shader {
 
-struct Shader : public GLHandle {
-	typedef GLHandle Super;
+struct Shader : public Wrapper<
+	glGetShaderiv,
+	glGetShaderInfoLog,
+	glDeleteShader
+> {
+	typedef Wrapper Super;
 
 	Shader();
 	Shader(const Shader& shader);
@@ -48,10 +52,20 @@ struct ShaderType : public Shader {
 		setSources(sources);
 		compile();
 	}
+
+	ShaderType(const std::string& source)
+	: Super(shaderType)
+	{
+		setSources(std::vector<std::string>{source});
+		compile();
+	}
 };
 
-typedef ShaderType<GL_VERTEX_SHADER_ARB> VertexShader;
-typedef ShaderType<GL_FRAGMENT_SHADER_ARB> FragmentShader;
+typedef ShaderType<GL_VERTEX_SHADER> VertexShader;
+typedef ShaderType<GL_TESS_CONTROL_SHADER> TessControlShader;
+typedef ShaderType<GL_TESS_EVALUATION_SHADER> TessEvalShader;
+typedef ShaderType<GL_GEOMETRY_SHADER> GeometryShader;
+typedef ShaderType<GL_FRAGMENT_SHADER> FragmentShader;
+typedef ShaderType<GL_COMPUTE_SHADER> ComputeShader;
 
 };
-
