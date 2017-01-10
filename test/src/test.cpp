@@ -19,8 +19,6 @@ struct Test : public GLApp::GLApp {
 			Shader::FragmentShader(std::vector<std::string>{"#define FRAGMENT_SHADER\n", shaderCode})
 		};
 		shaderProgram = std::make_shared<Shader::Program>(shaders);
-		shaderProgram->link()
-			.done();
 	}
 	
 	virtual void resize(int width, int height) {
