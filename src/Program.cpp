@@ -30,6 +30,12 @@ Program& Program::attach(const Shader& shader) {
 }
 
 Program& Program::link() {
+	int status = -1;
+	glGetProgramiv((*this)(), GL_LINK_STATUS, &status);
+
+	//don't link twice!!! intel drivers are crashing when you do that
+	if (status != 0) throw Common::Exception() << "won't link, program " << (*this)() << " already has link status " << status;
+
 	glLinkProgram((*this)());
 	
 	GLint linked = 0;
