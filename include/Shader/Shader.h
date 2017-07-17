@@ -62,10 +62,18 @@ struct ShaderType : public Shader {
 };
 
 typedef ShaderType<GL_VERTEX_SHADER> VertexShader;
-typedef ShaderType<GL_TESS_CONTROL_SHADER> TessControlShader;
-typedef ShaderType<GL_TESS_EVALUATION_SHADER> TessEvalShader;
-typedef ShaderType<GL_GEOMETRY_SHADER> GeometryShader;
 typedef ShaderType<GL_FRAGMENT_SHADER> FragmentShader;
-typedef ShaderType<GL_COMPUTE_SHADER> ComputeShader;
 
+#if defined(GL_GEOMETRY_SHADER)
+typedef ShaderType<GL_GEOMETRY_SHADER> GeometryShader;
+#endif
+#if defined(GL_TESS_CONTROL_SHADER)
+typedef ShaderType<GL_TESS_CONTROL_SHADER> TessControlShader;
+#endif
+#if defined(GL_TESS_EVALUATION_SHADER)
+typedef ShaderType<GL_TESS_EVALUATION_SHADER> TessEvalShader;
+#endif
+#if defined(GL_COMPUTE_SHADER) 
+typedef ShaderType<GL_COMPUTE_SHADER> ComputeShader;
+#endif
 };
