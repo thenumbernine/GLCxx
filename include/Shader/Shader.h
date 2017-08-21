@@ -6,11 +6,21 @@
 
 namespace Shader {
 
-struct Shader : public Wrapper<
-	glGetShaderiv,
-	glGetShaderInfoLog,
-	glDeleteShader
-> {
+struct ShaderWrapperInfo {
+	static void getivFn(GLuint a, GLenum b, GLint* c) {
+		glGetShaderiv(a,b,c);
+	}
+
+	static void getInfoLogFn(GLuint a, GLint b, GLint* c, GLchar* d) {
+		glGetShaderInfoLog(a,b,c,d);
+	}
+
+	static void deleteFn(GLuint a) {
+		glDeleteShader(a);
+	}
+};
+
+struct Shader : public Wrapper<ShaderWrapperInfo> {
 	typedef Wrapper Super;
 
 	Shader();
@@ -76,4 +86,4 @@ typedef ShaderType<GL_TESS_EVALUATION_SHADER> TessEvalShader;
 #if defined(GL_COMPUTE_SHADER) 
 typedef ShaderType<GL_COMPUTE_SHADER> ComputeShader;
 #endif
-};
+}

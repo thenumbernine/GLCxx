@@ -5,11 +5,21 @@
 
 namespace Shader {
 
-struct Program : public Wrapper<
-	glGetProgramiv,
-	glGetProgramInfoLog,
-	glDeleteProgram
-> {
+struct ProgramWrapperInfo {
+	static void getivFn(GLuint a, GLenum b, GLint* c) {
+		glGetProgramiv(a,b,c);
+	}
+
+	static void getInfoLogFn(GLuint a, GLint b, GLint* c, GLchar* d) {
+		glGetProgramInfoLog(a,b,c,d);
+	}
+
+	static void deleteFn(GLuint a) {
+		glDeleteProgram(a);
+	}
+};
+
+struct Program : public Wrapper<ProgramWrapperInfo> {
 	typedef Wrapper Super;
 
 protected:
@@ -45,4 +55,4 @@ public:
 	template<typename T> Program& setUniform(const std::string& name, T value1, T value2, T value3);
 };
 
-};
+}

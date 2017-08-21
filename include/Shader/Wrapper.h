@@ -10,13 +10,8 @@
 
 namespace Shader {
 
-template<
-	void (*getivFn)(GLuint, GLenum, GLint*),
-	void (*getInfoLogFn)(GLuint, GLint, GLint*, GLchar*),
-	void (*deleteFn)(GLuint)
->
+template<typename Info>
 struct Wrapper {
-
 protected:
 	
 	typedef ::GLuint HandleType;
@@ -31,7 +26,7 @@ protected:
 			handle = handle_;
 		}
 		~Contents() {
-			deleteFn(handle);
+			Info::deleteFn(handle);
 		}
 	};
 	
@@ -63,12 +58,12 @@ public:
 
 	std::string getLog() const {
 		GLint length = 0;
-		getivFn((*this)(), GL_INFO_LOG_LENGTH, &length);
+		Info::getivFn((*this)(), GL_INFO_LOG_LENGTH, &length);
 std::cout << "log length: " << length << std::endl;		
 		if (length <= 0) return std::string();
 
 		std::vector<GLchar> log(length);
-		getInfoLogFn((*this)(), length, nullptr, log.data());
+		Info::getInfoLogFn((*this)(), length, nullptr, log.data());
 std::cout << "log real length: " << length << std::endl;		
 
 		std::string logStr = std::string(log.begin(), log.end());
