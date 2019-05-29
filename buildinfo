@@ -1,3 +1,3 @@
 distName='Shader'
 distType='lib'
-depends:append{'../Common'}
+depends:append{'../Common', '../GLApp'}

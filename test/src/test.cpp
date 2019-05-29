@@ -1,5 +1,5 @@
-#include "Common/gl.h"
 #include "Common/File.h"
+#include "GLApp/gl.h"
 #include "GLApp/GLApp.h"
 #include "Shader/Program.h"
 
