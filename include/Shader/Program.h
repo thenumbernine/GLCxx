@@ -20,7 +20,7 @@ struct ProgramWrapperInfo {
 };
 
 struct Program : public Wrapper<ProgramWrapperInfo> {
-	typedef Wrapper Super;
+	using Super = Wrapper;
 
 protected:
 	//all attached shaders 

@@ -21,7 +21,7 @@ struct ShaderWrapperInfo {
 };
 
 struct Shader : public Wrapper<ShaderWrapperInfo> {
-	typedef Wrapper Super;
+	using Super = Wrapper;
 
 	Shader();
 	Shader(const Shader& shader);
@@ -42,7 +42,7 @@ struct Shader : public Wrapper<ShaderWrapperInfo> {
 
 template<int shaderType>
 struct ShaderType : public Shader {
-	typedef Shader Super;
+	using Super = Shader;
 	
 	ShaderType() {}
 
@@ -71,19 +71,19 @@ struct ShaderType : public Shader {
 	}
 };
 
-typedef ShaderType<GL_VERTEX_SHADER> VertexShader;
-typedef ShaderType<GL_FRAGMENT_SHADER> FragmentShader;
+using VertexShader = ShaderType<GL_VERTEX_SHADER>;
+using FragmentShader = ShaderType<GL_FRAGMENT_SHADER>;
 
 #if defined(GL_GEOMETRY_SHADER)
-typedef ShaderType<GL_GEOMETRY_SHADER> GeometryShader;
+using GeometryShader = ShaderType<GL_GEOMETRY_SHADER>;
 #endif
 #if defined(GL_TESS_CONTROL_SHADER)
-typedef ShaderType<GL_TESS_CONTROL_SHADER> TessControlShader;
+using TessControlShader = ShaderType<GL_TESS_CONTROL_SHADER>;
 #endif
 #if defined(GL_TESS_EVALUATION_SHADER)
-typedef ShaderType<GL_TESS_EVALUATION_SHADER> TessEvalShader;
+using TessEvalShader = ShaderType<GL_TESS_EVALUATION_SHADER>;
 #endif
 #if defined(GL_COMPUTE_SHADER) 
-typedef ShaderType<GL_COMPUTE_SHADER> ComputeShader;
+using ComputeShader = ShaderType<GL_COMPUTE_SHADER>;
 #endif
 }

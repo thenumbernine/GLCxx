@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Common/gl.h"
+#include "GLApp/gl.h"
 #include <string>
 #include <memory>
 #include <vector>
@@ -14,7 +14,7 @@ template<typename Info>
 struct Wrapper {
 protected:
 	
-	typedef ::GLuint HandleType;
+	using HandleType = ::GLuint;
 
 	struct Contents {
 		HandleType handle;
