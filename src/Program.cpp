@@ -23,6 +23,14 @@ Program::Program(std::vector<Shader>& shaders) {
 	link();
 }
 
+Program::Program(std::vector<Shader>&& shaders) {
+	contents = std::make_shared<Contents>(glCreateProgram());
+	for (Shader& shader : shaders) {
+		attach(shader);
+	}
+	link();
+}
+
 Program& Program::attach(const Shader& shader) {
 	glAttachShader((*this)(), shader());
 	attached.push_back(shader);

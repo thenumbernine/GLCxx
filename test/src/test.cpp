@@ -12,29 +12,29 @@ struct Test : public ::GLApp::ViewBehavior<::GLApp::GLApp> {
 	using Clock = std::chrono::high_resolution_clock;
 	std::chrono::time_point<Clock> lastTime = Clock::now();
 	
-	std::shared_ptr<Shader::Program> shaderProgram;
-
-	float angle = 0;
-	
-	virtual void init() {
-		Super::init();
-		glClearColor(.5, .75, .75, 1.);
-		viewFrustum->dist = 3.;
-	
+	static std::vector<Shader::Shader> getShaders() {
 		std::string shaderCode = Common::File::read("test.shader");
-		std::vector<Shader::Shader> shaders = {
+		return std::vector<Shader::Shader>{
 			Shader::VertexShader(std::vector<std::string>{"#define VERTEX_SHADER\n", shaderCode}),
 			Shader::FragmentShader(std::vector<std::string>{"#define FRAGMENT_SHADER\n", shaderCode})
 		};
-		shaderProgram = std::make_shared<Shader::Program>(shaders);
 	}
 	
-	virtual void update() {
+	std::shared_ptr<Shader::Program> shaderProgram = std::make_shared<Shader::Program>(getShaders());
+
+	Test(const Init& args) : Super(args) {
+		glClearColor(.5, .75, .75, 1.);
+		viewFrustum->dist = 3.;
+	}
+	
+	float angle = 0;
+
+	virtual void onUpdate() {
 		std::chrono::time_point<Clock> thisTime = Clock::now();
 		float deltaTime = 1e-9 * (double)std::chrono::duration_cast<std::chrono::nanoseconds>(thisTime - lastTime).count();
 		lastTime = thisTime;
 		
-		Super::update();
+		Super::onUpdate();
 		glMatrixMode(GL_MODELVIEW);
 		glRotatef(angle,0,1,0);
 		shaderProgram->use();

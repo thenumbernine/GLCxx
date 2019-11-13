@@ -32,6 +32,7 @@ public:
 	Program& operator=(const Program& program);
 
 	Program(std::vector<Shader>& shaders);
+	Program(std::vector<Shader>&& shaders);
 	
 	Program& attach(const Shader& shader);
 	Program& link();
