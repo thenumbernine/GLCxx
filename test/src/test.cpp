@@ -12,22 +12,26 @@ struct Test : public ::GLApp::ViewBehavior<::GLApp::GLApp> {
 	using Clock = std::chrono::high_resolution_clock;
 	std::chrono::time_point<Clock> lastTime = Clock::now();
 	
-	static std::vector<Shader::Shader> getShaders() {
-		std::string shaderCode = Common::File::read("test.shader");
-		return std::vector<Shader::Shader>{
-			Shader::VertexShader(std::vector<std::string>{"#define VERTEX_SHADER\n", shaderCode}),
-			Shader::FragmentShader(std::vector<std::string>{"#define FRAGMENT_SHADER\n", shaderCode})
-		};
-	}
-	
-	std::shared_ptr<Shader::Program> shaderProgram = std::make_shared<Shader::Program>(getShaders());
-
-	Test(const Init& args) : Super(args) {
-		glClearColor(.5, .75, .75, 1.);
-		viewFrustum->dist = 3.;
-	}
+	std::shared_ptr<Shader::Program> shaderProgram;
 	
 	float angle = 0;
+
+	virtual const char* getTitle() {
+		return "Shader Test";
+	}
+
+	virtual void init(const Init& args) {
+		Super::init(args);
+		
+		glClearColor(.5, .75, .75, 1.);
+		viewFrustum->dist = 3.;
+
+		std::string shaderCode = Common::File::read("test.shader");
+		shaderProgram = std::make_shared<Shader::Program>(std::vector<Shader::Shader>{
+			Shader::VertexShader(std::vector<std::string>{"#define VERTEX_SHADER\n", shaderCode}),
+			Shader::FragmentShader(std::vector<std::string>{"#define FRAGMENT_SHADER\n", shaderCode})
+		});
+	}
 
 	virtual void onUpdate() {
 		std::chrono::time_point<Clock> thisTime = Clock::now();
