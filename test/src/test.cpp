@@ -1,4 +1,7 @@
 #include "Shader/Program.h"
+#include "Shader/Attribute.h"
+#include "Shader/VertexArray.h"
+#include "Shader/Buffer.h"
 #include "GLApp/gl.h"
 #include "GLApp/GLApp.h"
 #include "GLApp/ViewBehavior.h"
@@ -20,17 +23,72 @@ struct Test : public ::GLApp::ViewBehavior<::GLApp::GLApp> {
 		return "Shader Test";
 	}
 
+	Shader::ArrayBuffer posBuf, colorBuf;
+	Shader::Attribute posAttr, colorAttr;
+	Shader::VertexArray vao;
+
 	virtual void init(const Init& args) {
 		Super::init(args);
 		
 		glClearColor(.5, .75, .75, 1.);
 		viewFrustum->dist = 3.;
 
+		
+		using float3 = Tensor::Vector<float, 3>;
+		posBuf = Shader::ArrayBuffer(std::vector<float3>{
+			{0, 1.25, 0},
+			{-1, -.75, 0},
+			{1, -.75, 0}
+		});
+		colorBuf = Shader::ArrayBuffer(std::vector<float3>{
+			{1,0,0},
+			{0,1,0},
+			{0,0,1}
+		});
+
+		std::string version = "#version 460\n";
 		std::string shaderCode = Common::File::read("test.shader");
 		shaderProgram = std::make_shared<Shader::Program>(std::vector<Shader::Shader>{
-			Shader::VertexShader(std::vector<std::string>{"#define VERTEX_SHADER\n", shaderCode}),
-			Shader::FragmentShader(std::vector<std::string>{"#define FRAGMENT_SHADER\n", shaderCode})
+			Shader::VertexShader(std::vector<std::string>{
+				version,	//first
+				"#define VERTEX_SHADER\n",
+				shaderCode,
+			}),
+			Shader::FragmentShader(std::vector<std::string>{
+				version,	//first
+				"#define FRAGMENT_SHADER\n",
+				shaderCode,
+			})
 		});
+
+		posAttr = Shader::Attribute(
+			GL_FLOAT,
+			3,
+			0,
+			0,
+			false,
+			1,
+			shaderProgram->getAttribLocation("pos"),
+			&posBuf
+		);
+		colorAttr = Shader::Attribute(
+			GL_FLOAT,
+			3,
+			0,
+			0,
+			false,
+			1,
+			shaderProgram->getAttribLocation("color"),
+			&colorBuf
+		);
+	
+		vao.attrs = {posAttr, colorAttr};
+		vao.bind();
+		vao.enableAttrs();
+		for (auto const & attr : vao.attrs) {
+			attr.set();	//requires attr.loc to be set
+		}
+		vao.unbind();
 	}
 
 	virtual void onUpdate() {
@@ -41,15 +99,19 @@ struct Test : public ::GLApp::ViewBehavior<::GLApp::GLApp> {
 		Super::onUpdate();
 		glMatrixMode(GL_MODELVIEW);
 		glRotatef(angle,0,1,0);
+		
 		shaderProgram->use();
-		glBegin(GL_TRIANGLES);
-		glColor3f(1,0,0);
-		glVertex3f(0, 1.25,0);
-		glColor3f(0,1,0);
-		glVertex3f(-1,-.75,0);
-		glColor3f(0,0,1);
-		glVertex3f(1,-.75,0);
-		glEnd();
+	
+		float m[16];
+		glGetFloatv(GL_PROJECTION_MATRIX, m);
+		glUniformMatrix4fv(shaderProgram->getUniformLocation("projectionMatrix"), 1, GL_FALSE, m);
+		glGetFloatv(GL_MODELVIEW_MATRIX, m);
+		glUniformMatrix4fv(shaderProgram->getUniformLocation("modelViewMatrix"), 1, GL_FALSE, m);
+		
+		vao.bind();
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+		vao.unbind();
+		
 		shaderProgram->done();
 		
 		angle += deltaTime * 360;	//1 revolution per second

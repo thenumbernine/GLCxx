@@ -25,34 +25,38 @@ struct BufferWrapperInfo {
 struct Buffer : public Wrapper<BufferWrapperInfo> {
 	using Super = Wrapper;
 
-	Buffer();
-	Buffer(int size, uint8_t * data = nullptr);
+	//TODO make this a member of the BufferWrapperInfo type, to pair it with the glGenBuffer?
+	int target = {};
+
+	Buffer(int target_);
+	Buffer(int target_, int size, uint8_t const * data = nullptr, int usage = GL_STATIC_DRAW);
 	Buffer(Buffer const & buffer);
 	Buffer& operator=(Buffer const & buffer);
 
-	void setData(int size, uint8_t * data, int usage = GL_STATIC_DRAW) const;
-	void updateData(int size, uint8_t * data, int offset = 0) const;
+	void setData(int size, uint8_t const * data, int usage = GL_STATIC_DRAW) const;
+	void updateData(int size, uint8_t const * data, int offset = 0) const;
 	void bind() const;
 	void unbind() const;
-	
-	//I guess unless I template Buffer then I'll need the vtable to hide the target
-	virtual int getTarget() const = 0; 
 };
 
-template<int target>
+//TODO no point in this separate class right, as long as I'm putting 'target' as a member variable of the parent.
+template<int Target>
 struct BufferType : public Buffer {
 	using Super = Buffer;
-	
-	virtual int getTarget() const { return target; }
 
-	BufferType() {}
-	BufferType(BufferType const & buffer) { this->operator=(buffer); }
+	BufferType() : Super(Target) {}
+	BufferType(BufferType const & buffer) { operator=(buffer); }
 	BufferType& operator=(BufferType const & buffer) {
-		contents = buffer.contents;
+		Super::operator=(buffer);
 		return *this;
 	}
 	
-	BufferType(int size, uint8_t * data = nullptr) : Super(size, data) {}
+	BufferType(int size, uint8_t const * data = nullptr, int usage = GL_STATIC_DRAW) 
+	: Super(Target, size, data, usage) {}
+
+	template<typename T>
+	BufferType(std::vector<T> const & v, int usage = GL_STATIC_DRAW)
+	: Super(Target, sizeof(T) * v.size(), (uint8_t const *)v.data(), usage) {}
 };
 
 using ArrayBuffer = BufferType<GL_ARRAY_BUFFER>;

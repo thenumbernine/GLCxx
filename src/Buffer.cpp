@@ -3,7 +3,7 @@
 
 namespace Shader {
 
-Buffer::Buffer() {}
+Buffer::Buffer(int target_) : target(target_) {}
 
 Buffer::Buffer(Buffer const & buffer) {
 	this->operator=(buffer);
@@ -11,6 +11,7 @@ Buffer::Buffer(Buffer const & buffer) {
 
 Buffer & Buffer::operator=(Buffer const & buffer) {
 	contents = buffer.contents;
+	target = buffer.target;
 	return *this;
 }
 
@@ -20,30 +21,30 @@ static GLuint genBuffer() {
 	return id;
 }
 
-Buffer::Buffer(int size, uint8_t * data)
-: Super(genBuffer())
+Buffer::Buffer(int target_, int size, uint8_t const * data, int usage)
+: Super(genBuffer()), target(target_)
 {
-	setData(size, data);
+	setData(size, data, usage);
 }
 	
-void Buffer::setData(int size, uint8_t * data, int usage) const {
+void Buffer::setData(int size, uint8_t const * data, int usage) const {
 	bind();
-	glBufferData(getTarget(), size, data, usage);
+	glBufferData(target, size, data, usage);
 	unbind();
 }
 
-void Buffer::updateData(int size, uint8_t * data, int offset) const {
+void Buffer::updateData(int size, uint8_t const * data, int offset) const {
 	bind();
-	glBufferSubData(getTarget(), offset, size, data);
+	glBufferSubData(target, offset, size, data);
 	unbind();
 }
 
 void Buffer::bind() const {
-	glBindBuffer(getTarget(), (*this)());
+	glBindBuffer(target, (*this)());
 }
 
 void Buffer::unbind() const {
-	glBindBuffer(getTarget(), 0);
+	glBindBuffer(target, 0);
 }
 
 }
