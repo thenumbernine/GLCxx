@@ -24,14 +24,14 @@ struct Shader : public Wrapper<ShaderWrapperInfo> {
 	using Super = Wrapper;
 
 	Shader();
-	Shader(const Shader& shader);
-	Shader& operator=(const Shader& shader);
+	Shader(Shader const & shader);
+	Shader& operator=(Shader const & shader);
 	
 	//create an uncompiled, uninitialized shader handle
 	Shader(int shaderType);
 
 	//add a source to the shader
-	virtual Shader& setSources(const std::vector<std::string>& sources);
+	virtual Shader& setSources(std::vector<std::string> const & sources);
 	
 	//compile the shader
 	virtual Shader& compile();
@@ -46,24 +46,24 @@ struct ShaderType : public Shader {
 	
 	ShaderType() {}
 
-	ShaderType(const ShaderType& shader) {
+	ShaderType(ShaderType const & shader) {
 		this->operator=(shader);
 	}
 	
-	ShaderType& operator=(const ShaderType& shader) {
+	ShaderType & operator=(ShaderType const & shader) {
 		contents = shader.contents;
 		return *this;
 	}
 
 	//create a shader of the specified type with the specified sources and compile it
-	ShaderType(const std::vector<std::string>& sources) 
+	ShaderType(std::vector<std::string> const & sources) 
 	: Super(shaderType)
 	{
 		setSources(sources);
 		compile();
 	}
 
-	ShaderType(const std::string& source)
+	ShaderType(std::string const & source)
 	: Super(shaderType)
 	{
 		setSources(std::vector<std::string>{source});

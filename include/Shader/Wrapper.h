@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GLApp/gl.h"
+#include "Common/Exception.h"
 #include <string>
 #include <memory>
 #include <vector>
@@ -10,10 +11,10 @@
 
 namespace Shader {
 
-template<typename Info>
+template<typename Info_>
 struct Wrapper {
 protected:
-	
+	using Info = Info_;
 	using HandleType = ::GLuint;
 
 	struct Contents {
@@ -52,7 +53,7 @@ public:
 	virtual ~Wrapper() {}
 
 	HandleType operator()() const {
-		if (!contents.get()) return HandleType();
+		if (!contents.get()) return {};
 		return contents->handle;
 	}
 

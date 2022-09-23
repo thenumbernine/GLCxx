@@ -8,11 +8,11 @@ namespace Shader {
 
 Shader::Shader() {}
 
-Shader::Shader(const Shader& shader) {
+Shader::Shader(Shader const & shader) {
 	this->operator=(shader);
 }
 
-Shader& Shader::operator=(const Shader& shader) {
+Shader & Shader::operator=(Shader const & shader) {
 	contents = shader.contents;
 	return *this;
 }
@@ -22,8 +22,8 @@ Shader::Shader(int shaderType)
 {
 }
 
-Shader& Shader::setSources(const std::vector<std::string>& sources) {
-	std::vector<const GLchar*> cstrs(sources.size());
+Shader & Shader::setSources(std::vector<std::string> const & sources) {
+	std::vector<GLchar const *> cstrs(sources.size());
 	std::vector<GLint> lens(sources.size());
 	for (int i = 0; i < (int)sources.size(); ++i) {
 		cstrs[i] = sources[i].c_str();
@@ -33,7 +33,7 @@ Shader& Shader::setSources(const std::vector<std::string>& sources) {
 	return *this;
 }
 
-Shader& Shader::compile() {
+Shader & Shader::compile() {
 	glCompileShader((*this)());
 	GLint compiled = 0;
 	glGetShaderiv((*this)(), GL_COMPILE_STATUS, &compiled);
