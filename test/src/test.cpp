@@ -5,6 +5,7 @@
 #include "GLApp/gl.h"
 #include "GLApp/GLApp.h"
 #include "GLApp/ViewBehavior.h"
+#include "Tensor/Tensor.h"
 #include "Common/File.h"
 
 #include <chrono>
@@ -33,30 +34,17 @@ struct Test : public ::GLApp::ViewBehavior<::GLApp::GLApp> {
 		glClearColor(.5, .75, .75, 1.);
 		viewFrustum->dist = 3.;
 
-		
-		using float3 = Tensor::Vector<float, 3>;
-		posBuf = Shader::ArrayBuffer(std::vector<float3>{
+		using float33 = Tensor::Tensor<float, Tensor::Lower<3>, Tensor::Lower<3>>;
+		posBuf = Shader::ArrayBuffer(float33{
 			{0, 1.25, 0},
 			{-1, -.75, 0},
 			{1, -.75, 0}
 		});
-		colorBuf = Shader::ArrayBuffer(std::vector<float3>{
+		colorBuf = Shader::ArrayBuffer(float33{
 			{1,0,0},
 			{0,1,0},
 			{0,0,1}
 		});
-#if 0  //goal:
-		posBuf = Shader::ArrayBuffer(Tensor::Tensor<float, Tensor::Lower<3>, Tensor::Lower<3>>{
-			{0, 1.25, 0},
-			{-1, -.75, 0},
-			{1, -.75, 0}
-		});
-		colorBuf = Shader::ArrayBuffer(Tensor::Tensor<float, Tensor::Lower<3>, Tensor::Lower<3>>{
-			{1,0,0},
-			{0,1,0},
-			{0,0,1}
-		});
-#endif
 
 		std::string version = "#version 460\n";
 		std::string shaderCode = Common::File::read("test.shader");
