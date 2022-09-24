@@ -34,6 +34,7 @@ void Buffer::setData(int size, void const * data, int usage) const {
 }
 
 void Buffer::updateData(int size, void const * data, int offset) const {
+	if (!data) return;      //glBufferData spec says it can handle NULL, glBufferSubData doesn't
 	bind();
 	glBufferSubData(target, offset, size, data);
 	unbind();
