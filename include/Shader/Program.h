@@ -2,6 +2,7 @@
 
 #include "Shader/Shader.h"
 #include <list>
+#include <vector>
 
 namespace Shader {
 
@@ -33,6 +34,16 @@ public:
 
 	Program(std::vector<Shader>& shaders);
 	Program(std::vector<Shader>&& shaders);
+	
+	// alright shorthand ...
+	// should I provide a vector-of-vectors-of-strings to pass into VertexShader and FragmentShader?
+	// or a 2-param list of vector-of-strings to pass to VertexShader and FragmentShader?
+	// or maybe just 2-param strings?  no need to pass the Shader a vector-of-strings?
+	Program(
+		std::vector<std::string> const & vertexShaderCode,
+		std::vector<std::string> const & fragmentShaderCode
+	);
+
 	void init(std::vector<Shader> & shaders);
 	
 	Program & attach(Shader const & shader);
@@ -50,8 +61,8 @@ public:
 	Program & done();	//useNone for this.  had to think of a clever new name.
 	static void useNone();
 
-	int getUniformLocation(std::string const & name);
-	int getAttribLocation(std::string const & name);
+	int getUniformLocation(std::string const & name) const;
+	int getAttribLocation(std::string const & name) const;
 
 	template<typename T> Program & setUniform(std::string const & name, T value);
 	template<typename T> Program & setUniform(std::string const & name, T value1, T value2);

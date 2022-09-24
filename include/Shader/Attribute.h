@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Shader/Buffer.h"
+#include "Shader/Program.h"
 
 namespace Shader {
 
@@ -17,11 +18,12 @@ struct Attribute {
 	int arraySize = 1;	//e.g. 3 for "attribute float attr[3];"
 	
 	int loc = {};		//attribute location of our Program
-	
+
+	//should all Attribute objects *always* have associated Buffer objects?
 	Buffer * buffer = {};
 
 	Attribute() {}
-	
+
 	Attribute(
 		//int glslType_,
 		int type_,
@@ -40,38 +42,32 @@ struct Attribute {
 		arraySize(arraySize_),
 		loc(loc_),
 		buffer(buffer_)
-	{
-	}
+	{}
 
-#if 0
 	Attribute(
 		Program const & program,
 		int loc_,
-		Buffer * buffer_
-	) {
-		loc = loc_;
-#error here	
-		//derive the rest from program attrib loc
-		int maxLen = {};
-		glGetIntegerv(GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &maxLen);
-		int bufSize = maxLen+1;
-		std::vector<GLchar> name(bufSize);
-		GLsizei length = {};
-		GLint arraySize = {};
-		GLenum glslType = {};
-		glGetActiveAttrib(program(), loc, bufSize, &length, &arraySize, &glslType, name.data());
+		Buffer * buffer_ = {}
+	) : loc(loc_),
+		buffer(buffer_)
+	{
+		deriveFromProgramAttr(program);
 	}
 
 	Attribute(
 		Program const & program,
 		std::string const & name,
-		Buffer * buffer_
-	) {
-		loc = program.getAttribLocation(name);
-#error here	
-		//derive the rest from program attrib loc
+		Buffer * buffer_ = {}
+	) : loc(program.getAttribLocation(name)),
+		buffer(buffer_)
+	{
+		deriveFromProgramAttr(program);
 	}
-#endif
+
+protected:
+	void deriveFromProgramAttr(Program const & program);
+
+public:
 
 	//assumes the buffer is bound
 	void setPointer() const;

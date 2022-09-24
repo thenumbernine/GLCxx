@@ -48,47 +48,27 @@ struct Test : public ::GLApp::ViewBehavior<::GLApp::GLApp> {
 
 		std::string version = "#version 460\n";
 		std::string shaderCode = Common::File::read("test.shader");
-		shaderProgram = std::make_shared<Shader::Program>(std::vector<Shader::Shader>{
-			Shader::VertexShader(std::vector<std::string>{
+		shaderProgram = std::make_shared<Shader::Program>(
+			// vertex code
+			std::vector<std::string>{
 				version,	//first
 				"#define VERTEX_SHADER\n",
 				shaderCode,
-			}),
-			Shader::FragmentShader(std::vector<std::string>{
+			},
+			// fragment code
+			std::vector<std::string>{
 				version,	//first
 				"#define FRAGMENT_SHADER\n",
 				shaderCode,
-			})
-		});
+			}
+		);
 
-		posAttr = Shader::Attribute(
-			GL_FLOAT,
-			3,
-			0,
-			0,
-			false,
-			1,
-			shaderProgram->getAttribLocation("pos"),
-			&posBuf
-		);
-		colorAttr = Shader::Attribute(
-			GL_FLOAT,
-			3,
-			0,
-			0,
-			false,
-			1,
-			shaderProgram->getAttribLocation("color"),
-			&colorBuf
-		);
+		//infer attribute properties from the shader program's attribute info
+		posAttr = Shader::Attribute(*shaderProgram, "pos", &posBuf);
+		colorAttr = Shader::Attribute(*shaderProgram, "color", &colorBuf);
 	
 		vao.attrs = {posAttr, colorAttr};
-		vao.bind();
-		vao.enableAttrs();
-		for (auto const & attr : vao.attrs) {
-			attr.set();	//requires attr.loc to be set
-		}
-		vao.unbind();
+		vao.setAttrs();
 	}
 
 	virtual void onUpdate() {
@@ -109,7 +89,9 @@ struct Test : public ::GLApp::ViewBehavior<::GLApp::GLApp> {
 		glUniformMatrix4fv(shaderProgram->getUniformLocation("modelViewMatrix"), 1, GL_FALSE, m);
 		
 		vao.bind();
+		vao.enableAttrs();
 		glDrawArrays(GL_TRIANGLES, 0, 3);
+		vao.disableAttrs();
 		vao.unbind();
 		
 		shaderProgram->done();

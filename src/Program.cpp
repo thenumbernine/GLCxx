@@ -1,5 +1,6 @@
 #include "Shader/Program.h"
 #include "Common/Exception.h"
+#include <vector>
 
 namespace Shader {
 
@@ -20,6 +21,17 @@ Program::Program(std::vector<Shader> & shaders) {
 }
 
 Program::Program(std::vector<Shader>&& shaders) {
+	init(shaders);
+}
+
+Program::Program(
+	std::vector<std::string> const & vertexShaderCode,
+	std::vector<std::string> const & fragmentShaderCode
+) {
+	std::vector<Shader> shaders = {
+		VertexShader(vertexShaderCode),
+		FragmentShader(fragmentShaderCode),
+	};
 	init(shaders);
 }
 
@@ -75,11 +87,11 @@ void Program::useNone() {
 	glUseProgram(0);
 }
 
-int Program::getUniformLocation(std::string const & name) {
+int Program::getUniformLocation(std::string const & name) const {
 	return glGetUniformLocation((*this)(), name.c_str());
 }
 
-int Program::getAttribLocation(std::string const & name) {
+int Program::getAttribLocation(std::string const & name) const {
 	return glGetAttribLocation((*this)(), name.c_str());
 }
 
