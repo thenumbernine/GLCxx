@@ -29,12 +29,18 @@ struct Buffer : public Wrapper<BufferWrapperInfo> {
 	int target = {};
 
 	Buffer(int target_);
-	Buffer(int target_, int size, uint8_t const * data = nullptr, int usage = GL_STATIC_DRAW);
+	Buffer(int target_, int size, void const * data = nullptr, int usage = GL_STATIC_DRAW);
 	Buffer(Buffer const & buffer);
 	Buffer& operator=(Buffer const & buffer);
 
-	void setData(int size, uint8_t const * data, int usage = GL_STATIC_DRAW) const;
-	void updateData(int size, uint8_t const * data, int offset = 0) const;
+	void setData(int size, void const * data, int usage = GL_STATIC_DRAW) const;
+	void updateData(int size, void const * data, int offset = 0) const;
+	
+	template<typename T>
+	void updateData(T const & t, int offset = 0) const {
+		updateData(sizeof(T), &t, offset);
+	}
+
 	void bind() const;
 	void unbind() const;
 };
@@ -46,17 +52,23 @@ struct BufferType : public Buffer {
 
 	BufferType() : Super(Target) {}
 	BufferType(BufferType const & buffer) { operator=(buffer); }
+	
+	BufferType(int size, void const * data = nullptr, int usage = GL_STATIC_DRAW) 
+	: Super(Target, size, data, usage) {}
+
+	//default upload the blob.  kind of dangerous to define this because what if C++ decides the vector is a blob.
+	template<typename T>
+	BufferType(T const & t, int usage = GL_STATIC_DRAW)
+	: Super(Target, sizeof(T), &t, usage) {}
+
+	template<typename T>
+	BufferType(std::vector<T> const & v, int usage = GL_STATIC_DRAW)
+	: Super(Target, sizeof(T) * v.size(), (void const *)v.data(), usage) {}
+
 	BufferType& operator=(BufferType const & buffer) {
 		Super::operator=(buffer);
 		return *this;
 	}
-	
-	BufferType(int size, uint8_t const * data = nullptr, int usage = GL_STATIC_DRAW) 
-	: Super(Target, size, data, usage) {}
-
-	template<typename T>
-	BufferType(std::vector<T> const & v, int usage = GL_STATIC_DRAW)
-	: Super(Target, sizeof(T) * v.size(), (uint8_t const *)v.data(), usage) {}
 };
 
 using ArrayBuffer = BufferType<GL_ARRAY_BUFFER>;
@@ -64,4 +76,13 @@ using ElementArrayBuffer = BufferType<GL_ELEMENT_ARRAY_BUFFER>;
 using PixelPackBuffer = BufferType<GL_PIXEL_PACK_BUFFER>;
 using PixelUnpackBuffer = BufferType<GL_PIXEL_UNPACK_BUFFER>;
 
+// was thinking of this but then we can't declare types to insert Target ... ex: we would have to declare Buffer and assign ArrayBuffer
+#if 0
+template<typename ...Params> Buffer ArrayBuffer(Params&&... params) { return Buffer(GL_ARRAY_BUFFER, std::forward<Params>(params)...); }
+template<typename ...Params> Buffer ElementArrayBuffer(Params&&... params) { return Buffer(GL_ELEMENT_ARRAY_BUFFER, std::forward<Params>(params)...); }
+template<typename ...Params> Buffer PixelPackBuffer(Params&&... params) { return Buffer(GL_PIXEL_PACK_BUFFER, std::forward<Params>(params)...); }
+template<typename ...Params> Buffer PixelUnpackBuffer(Params&&... params) { return Buffer(GL_PIXEL_UNPACK_BUFFER, std::forward<Params>(params)...); }
+
+
+#endif
 }

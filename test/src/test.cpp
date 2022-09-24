@@ -45,6 +45,18 @@ struct Test : public ::GLApp::ViewBehavior<::GLApp::GLApp> {
 			{0,1,0},
 			{0,0,1}
 		});
+#if 0  //goal:
+		posBuf = Shader::ArrayBuffer(Tensor::Tensor<float, Tensor::Lower<3>, Tensor::Lower<3>>{
+			{0, 1.25, 0},
+			{-1, -.75, 0},
+			{1, -.75, 0}
+		});
+		colorBuf = Shader::ArrayBuffer(Tensor::Tensor<float, Tensor::Lower<3>, Tensor::Lower<3>>{
+			{1,0,0},
+			{0,1,0},
+			{0,0,1}
+		});
+#endif
 
 		std::string version = "#version 460\n";
 		std::string shaderCode = Common::File::read("test.shader");

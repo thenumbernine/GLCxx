@@ -21,19 +21,19 @@ static GLuint genBuffer() {
 	return id;
 }
 
-Buffer::Buffer(int target_, int size, uint8_t const * data, int usage)
+Buffer::Buffer(int target_, int size, void const * data, int usage)
 : Super(genBuffer()), target(target_)
 {
 	setData(size, data, usage);
 }
 	
-void Buffer::setData(int size, uint8_t const * data, int usage) const {
+void Buffer::setData(int size, void const * data, int usage) const {
 	bind();
 	glBufferData(target, size, data, usage);
 	unbind();
 }
 
-void Buffer::updateData(int size, uint8_t const * data, int offset) const {
+void Buffer::updateData(int size, void const * data, int offset) const {
 	bind();
 	glBufferSubData(target, offset, size, data);
 	unbind();
