@@ -8,9 +8,7 @@ static GLuint genVertexArray() {
 	return id;
 }
 
-VertexArray::VertexArray() 
-: Super(genVertexArray())
-{}
+VertexArray::VertexArray() {}
 
 VertexArray::VertexArray(VertexArray const & vao) {
 	operator=(vao);

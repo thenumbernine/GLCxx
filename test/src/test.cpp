@@ -7,8 +7,9 @@
 #include "GLApp/ViewBehavior.h"
 #include "Tensor/Tensor.h"
 #include "Common/File.h"
-
 #include <chrono>
+
+//#define USE_VAO
 
 struct Test : public ::GLApp::ViewBehavior<::GLApp::GLApp> {
 	using Super = ::GLApp::ViewBehavior<::GLApp::GLApp>;
@@ -24,7 +25,7 @@ struct Test : public ::GLApp::ViewBehavior<::GLApp::GLApp> {
 		return "Shader Test";
 	}
 
-	Shader::ArrayBuffer posBuf, colorBuf;
+	Shader::Buffer posBuf, colorBuf, indexBuf;
 	Shader::Attribute posAttr, colorAttr;
 	Shader::VertexArray vao;
 
@@ -45,6 +46,7 @@ struct Test : public ::GLApp::ViewBehavior<::GLApp::GLApp> {
 			{0,1,0},
 			{0,0,1}
 		});
+		indexBuf = Shader::ElementArrayBuffer(Tensor::int3{0,1,2});
 
 		std::string version = "#version 460\n";
 		std::string shaderCode = Common::File::read("test.shader");
@@ -67,12 +69,31 @@ struct Test : public ::GLApp::ViewBehavior<::GLApp::GLApp> {
 		posAttr = Shader::Attribute(*shaderProgram, "pos", &posBuf);
 		colorAttr = Shader::Attribute(*shaderProgram, "color", &colorBuf);
 
-#if 1
-		vao.attrs = {posAttr, colorAttr};
-		vao.setAttrs();
-#else	
+#ifdef USE_VAO
 		vao = Shader::VertexArray(std::vector<Shader::Attribute>{posAttr, colorAttr});
-#endif	
+		vao.bind();
+		for (auto const & attr : vao.attrs) {
+			attr.buffer->bind();
+			attr.enable();
+			attr.set();
+		}
+		indexBuf.bind();
+		// this + vao is crashing it
+		//Tensor::int3 indexes = {0,1,2};
+		//indexBuf.updateData(sizeof(indexes), indexes.v, 0);
+		vao.unbind();
+		
+		posBuf.unbind();	//TODO static per-templated-buffer unbin()
+		indexBuf.unbind();
+#else
+		posAttr.buffer->bind();
+		posAttr.setPointer();
+		posAttr.buffer->unbind();
+		
+		colorAttr.buffer->bind();
+		colorAttr.setPointer();
+		colorAttr.buffer->unbind();
+#endif
 	}
 
 	virtual void onUpdate() {
@@ -91,12 +112,22 @@ struct Test : public ::GLApp::ViewBehavior<::GLApp::GLApp> {
 		glUniformMatrix4fv(shaderProgram->getUniformLocation("projectionMatrix"), 1, GL_FALSE, m);
 		glGetFloatv(GL_MODELVIEW_MATRIX, m);
 		glUniformMatrix4fv(shaderProgram->getUniformLocation("modelViewMatrix"), 1, GL_FALSE, m);
-		
+#ifdef USE_VAO
 		vao.bind();
-		vao.enableAttrs();
-		glDrawArrays(GL_TRIANGLES, 0, 3);
-		vao.disableAttrs();
+		//vao.enableAttrs();
+		//glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
+		//vao.disableAttrs();
 		vao.unbind();
+#else
+		posAttr.enable();
+		colorAttr.enable();
+		indexBuf.bind();
+		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
+		indexBuf.unbind();
+		posAttr.disable();
+		colorAttr.disable();
+#endif
 		
 		shaderProgram->done();
 		

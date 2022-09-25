@@ -3,10 +3,14 @@
 
 namespace Shader {
 
-Buffer::Buffer(int target_) : target(target_) {}
+Buffer::Buffer() {}
 
 Buffer::Buffer(Buffer const & buffer) {
-	this->operator=(buffer);
+	operator=(buffer);
+}
+
+Buffer::Buffer(Buffer && buffer) {
+	operator=(buffer);
 }
 
 Buffer & Buffer::operator=(Buffer const & buffer) {
@@ -15,10 +19,10 @@ Buffer & Buffer::operator=(Buffer const & buffer) {
 	return *this;
 }
 
-static GLuint genBuffer() {
-	GLuint id = {};
-	glGenBuffers(1, &id);
-	return id;
+Buffer & Buffer::operator=(Buffer && buffer) {
+	contents = buffer.contents;
+	target = buffer.target;
+	return *this;
 }
 
 Buffer::Buffer(int target_, int size, void const * data, int usage)
