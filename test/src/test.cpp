@@ -2,6 +2,7 @@
 #include "Shader/Attribute.h"
 #include "Shader/VertexArray.h"
 #include "Shader/Buffer.h"
+#include "Shader/Report.h"
 #include "GLApp/gl.h"
 #include "GLApp/GLApp.h"
 #include "GLApp/ViewBehavior.h"
@@ -46,7 +47,7 @@ struct Test : public ::GLApp::ViewBehavior<::GLApp::GLApp> {
 			{0,1,0},
 			{0,0,1}
 		});
-		indexBuf = Shader::ElementArrayBuffer(Tensor::int3{0,1,2});
+		indexBuf = Shader::ElementArrayBuffer(Tensor::uint3{0,1,2});
 
 		std::string version = "#version 460\n";
 		std::string shaderCode = Common::File::read("test.shader");
@@ -64,27 +65,40 @@ struct Test : public ::GLApp::ViewBehavior<::GLApp::GLApp> {
 				shaderCode,
 			}
 		);
+GLREPORT("here");		
 
 		//infer attribute properties from the shader program's attribute info
 		posAttr = Shader::Attribute(*shaderProgram, "pos", &posBuf);
+GLREPORT("here");		
 		colorAttr = Shader::Attribute(*shaderProgram, "color", &colorBuf);
+GLREPORT("here");		
 
 #ifdef USE_VAO
+GLREPORT("here");		
 		vao = Shader::VertexArray(std::vector<Shader::Attribute>{posAttr, colorAttr});
+GLREPORT("here");		
 		vao.bind();
+GLREPORT("here");		
 		for (auto const & attr : vao.attrs) {
-			attr.buffer->bind();
+			//attr.set();
+GLREPORT("here");		
 			attr.enable();
-			attr.set();
+GLREPORT("here");		
+			attr.buffer->bind();
+GLREPORT("here");		
+			attr.setPointer();
+GLREPORT("here");		
+			attr.buffer->unbind();
+GLREPORT("here");		
 		}
-		indexBuf.bind();
+		//indexBuf.bind();
 		// this + vao is crashing it
-		//Tensor::int3 indexes = {0,1,2};
-		//indexBuf.updateData(sizeof(indexes), indexes.v, 0);
+		//Tensor::uint3 indexes = {0,1,2};
+		//indexBuf.updateData(indexes);
 		vao.unbind();
-		
-		posBuf.unbind();	//TODO static per-templated-buffer unbin()
-		indexBuf.unbind();
+GLREPORT("here");		
+		//posBuf.unbind();	//TODO static per-templated-buffer unbin()
+		//indexBuf.unbind();
 #else
 		posAttr.buffer->bind();
 		posAttr.setPointer();
@@ -97,6 +111,8 @@ struct Test : public ::GLApp::ViewBehavior<::GLApp::GLApp> {
 	}
 
 	virtual void onUpdate() {
+GLREPORT("onUpdate begin");
+
 		std::chrono::time_point<Clock> thisTime = Clock::now();
 		float deltaTime = 1e-9 * (double)std::chrono::duration_cast<std::chrono::nanoseconds>(thisTime - lastTime).count();
 		lastTime = thisTime;
@@ -115,8 +131,9 @@ struct Test : public ::GLApp::ViewBehavior<::GLApp::GLApp> {
 #ifdef USE_VAO
 		vao.bind();
 		//vao.enableAttrs();
-		//glDrawArrays(GL_TRIANGLES, 0, 3);
+		indexBuf.bind();
 		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
+		indexBuf.unbind();
 		//vao.disableAttrs();
 		vao.unbind();
 #else
@@ -132,6 +149,8 @@ struct Test : public ::GLApp::ViewBehavior<::GLApp::GLApp> {
 		shaderProgram->done();
 		
 		angle += deltaTime * 360;	//1 revolution per second
+
+GLREPORT("onUpdate end");
 	}
 };
 

@@ -8,18 +8,42 @@ namespace Shader {
 
 Shader::Shader() {}
 
-Shader::Shader(Shader const & shader) {
-	this->operator=(shader);
-}
-
 Shader & Shader::operator=(Shader const & shader) {
 	contents = shader.contents;
+	shaderType = shader.shaderType;
 	return *this;
 }
 
-Shader::Shader(int shaderType)
-: Super(glCreateShader(shaderType))
+Shader & Shader::operator=(Shader && shader) {
+	contents = shader.contents;
+	shaderType = shader.shaderType;
+	return *this;
+}
+
+Shader::Shader(Shader const & shader) {
+	operator=(shader);
+}
+
+Shader::Shader(Shader && shader) {
+	operator=(shader);
+}
+
+Shader::Shader(int shaderType_)
+: Super(glCreateShader(shaderType_)), shaderType(shaderType_)
+{}
+	
+Shader::Shader(int shaderType_, std::vector<std::string> const & sources)
+: Super(glCreateShader(shaderType_)), shaderType(shaderType_)
 {
+	setSources(sources);
+	compile();
+}
+
+Shader::Shader(int shaderType_, std::string const & source)
+: Super(glCreateShader(shaderType_)), shaderType(shaderType_)
+{
+	setSources(std::vector<std::string>{source});
+	compile();
 }
 
 Shader & Shader::setSources(std::vector<std::string> const & sources) {
@@ -35,8 +59,7 @@ Shader & Shader::setSources(std::vector<std::string> const & sources) {
 
 Shader & Shader::compile() {
 	glCompileShader((*this)());
-	GLint compiled = 0;
-	glGetShaderiv((*this)(), GL_COMPILE_STATUS, &compiled);
+	GLint compiled = geti<GL_COMPILE_STATUS>();
 	if (compiled == GL_FALSE) {
 		throw Common::Exception() << "failed to compile shader.\n" << getLog();
 	}
@@ -51,5 +74,4 @@ std::string Shader::nameForType(int shaderType) {
 	return "Unknown";
 }
 
-};
-
+}

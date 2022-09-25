@@ -1,5 +1,6 @@
 #include "Shader/Attribute.h"
 #include "Shader/Program.h"
+#include "Shader/Report.h"
 #include "GLApp/gl.h"
 #include <map>
 
@@ -60,8 +61,8 @@ static std::map<int, AttributeTypeInfo> getTypeAndSizeForGLSLType = {
 void Attribute::deriveFromProgramAttr(Program const & program) {
 	//derive the rest from program attrib loc
 	// TODO do this up front in Program for all uniforms and attributes?
-	int maxLen = {};
-	glGetIntegerv(GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &maxLen);
+	GLint maxLen = program.geti<GL_ACTIVE_ATTRIBUTE_MAX_LENGTH>();
+	program.done();
 	int bufSize = maxLen+1;
 	std::vector<GLchar> name(bufSize);
 	GLsizei length = {};

@@ -25,67 +25,44 @@ struct ShaderWrapperInfo {
 struct Shader : public Wrapper<ShaderWrapperInfo> {
 	using Super = Wrapper;
 
+	int shaderType = {};
+
 	Shader();
+	Shader & operator=(Shader const & shader);
+	Shader & operator=(Shader && shader);
 	Shader(Shader const & shader);
-	Shader& operator=(Shader const & shader);
+	Shader(Shader && shader);
 	
 	//create an uncompiled, uninitialized shader handle
-	Shader(int shaderType);
+	Shader(int shaderType_);
+
+	//create a shader of the specified type with the specified sources and compile it
+	Shader(int shaderType_, std::vector<std::string> const & sources);
+	Shader(int shaderType_, std::string const & source);
 
 	//add a source to the shader
-	virtual Shader& setSources(std::vector<std::string> const & sources);
+	Shader & setSources(std::vector<std::string> const & sources);
 	
 	//compile the shader
-	virtual Shader& compile();
+	Shader & compile();
 
 	//return the name for which type of shader
 	static std::string nameForType(int shaderType);
 };
 
-template<int shaderType>
-struct ShaderType : public Shader {
-	using Super = Shader;
-	
-	ShaderType() {}
-
-	ShaderType(ShaderType const & shader) {
-		this->operator=(shader);
-	}
-	
-	ShaderType & operator=(ShaderType const & shader) {
-		contents = shader.contents;
-		return *this;
-	}
-
-	//create a shader of the specified type with the specified sources and compile it
-	ShaderType(std::vector<std::string> const & sources) 
-	: Super(shaderType)
-	{
-		setSources(sources);
-		compile();
-	}
-
-	ShaderType(std::string const & source)
-	: Super(shaderType)
-	{
-		setSources(std::vector<std::string>{source});
-		compile();
-	}
-};
-
-using VertexShader = ShaderType<GL_VERTEX_SHADER>;
-using FragmentShader = ShaderType<GL_FRAGMENT_SHADER>;
+template<typename ...Params> Shader VertexShader(Params&&... params) { return Shader(GL_VERTEX_SHADER, std::forward<Params>(params)...); }
+template<typename ...Params> Shader FragmentShader(Params&&... params) { return Shader(GL_FRAGMENT_SHADER, std::forward<Params>(params)...); }
 
 #if defined(GL_GEOMETRY_SHADER)
-using GeometryShader = ShaderType<GL_GEOMETRY_SHADER>;
+template<typename ...Params> Shader GeometryShader(Params&&... params) { return Shader(GL_GEOMETRY_SHADER, std::forward<Params>(params)...); }
 #endif
 #if defined(GL_TESS_CONTROL_SHADER)
-using TessControlShader = ShaderType<GL_TESS_CONTROL_SHADER>;
+template<typename ...Params> Shader TessControlShader(Params&&... params) { return Shader(GL_TESS_CONTROL_SHADER, std::forward<Params>(params)...); }
 #endif
 #if defined(GL_TESS_EVALUATION_SHADER)
-using TessEvalShader = ShaderType<GL_TESS_EVALUATION_SHADER>;
+template<typename ...Params> Shader TessEvalShader(Params&&... params) { return Shader(GL_TESS_EVALUATION_SHADER, std::forward<Params>(params)...); }
 #endif
 #if defined(GL_COMPUTE_SHADER) 
-using ComputeShader = ShaderType<GL_COMPUTE_SHADER>;
+template<typename ...Params> Shader ComputeShader(Params&&... params) { return Shader(GL_COMPUTE_SHADER, std::forward<Params>(params)...); }
 #endif
 }

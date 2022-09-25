@@ -91,16 +91,14 @@ Program & Program::attach(Shader const & shader) {
 }
 
 Program & Program::link() {
-	int status = -1;
-	glGetProgramiv((*this)(), GL_LINK_STATUS, &status);
+	GLint status = geti<GL_LINK_STATUS>();
 
 	//don't link twice!!! intel drivers are crashing when you do that
 	if (status != 0) throw Common::Exception() << "won't link, program " << (*this)() << " already has link status " << status;
 
 	glLinkProgram((*this)());
 	
-	GLint linked = 0;
-	glGetProgramiv((*this)(), GL_LINK_STATUS, (int*)&linked);
+	GLint linked = geti<GL_LINK_STATUS>();
 	if (!linked) {
 		throw Common::Exception() << "failed to link program.\n" << getLog();
 	}
@@ -110,12 +108,29 @@ Program & Program::link() {
 	return *this;
 }
 
+Program & Program::attachShader(int shaderType, std::vector<std::string> & sources) {
+	Shader shader(shaderType);
+	shader.setSources(sources);
+	attach(shader);
+	return *this;
+}
+
 Program & Program::use() {
 	glUseProgram((*this)());
 	return *this;
 }
 
+Program const & Program::use() const {
+	glUseProgram((*this)());
+	return *this;
+}
+
 Program & Program::done() {
+	Program::useNone();
+	return *this;
+}
+
+Program const & Program::done() const {
 	Program::useNone();
 	return *this;
 }

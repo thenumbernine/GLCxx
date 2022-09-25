@@ -66,9 +66,15 @@ public:
 		return contents->handle;
 	}
 
+	template<GLenum pname>
+	GLint geti() const {
+		GLint result = {};
+		Info::getivFn((*this)(), pname, &result);
+		return result;
+	}
+
 	std::string getLog() const {
-		GLint length = 0;
-		Info::getivFn((*this)(), GL_INFO_LOG_LENGTH, &length);
+		GLint length = geti<GL_INFO_LOG_LENGTH>();
 std::cout << "log length: " << length << std::endl;		
 		if (length <= 0) return std::string();
 

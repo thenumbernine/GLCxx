@@ -58,16 +58,12 @@ public:
 	Program & attach(Shader const & shader);
 	Program & link();
 
-	template<int shaderType>
-	Program & attachShader(std::vector<std::string>& sources) {
-		ShaderType<shaderType> shader;
-		shader.setSources(sources);
-		attach(shader);
-		return *this;
-	}
+	Program & attachShader(int shaderType, std::vector<std::string> & sources);
 
 	Program & use();
+	Program const & use() const;
 	Program & done();	//useNone for this.  had to think of a clever new name.
+	Program const & done() const;
 	static void useNone();
 
 	int getUniformLocation(std::string const & name) const;
