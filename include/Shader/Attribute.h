@@ -6,9 +6,6 @@
 namespace Shader {
 
 struct Attribute {
-	//this ....
-	//int glslType = {};	//GL_FLOAT_VEC2, GL_FLOAT_MAT3x3, etc ... used by getters I think? idk?  
-	//... seems redundant to these two ...	
 	int type = {};		//GL_FLOAT etc
 	int size = {};		// dimension of the data ... 1 2 3 4
 	
@@ -23,9 +20,8 @@ struct Attribute {
 	Buffer * buffer = {};
 
 	Attribute() {}
-
+	
 	Attribute(
-		//int glslType_,
 		int type_,
 		int size_,
 		int stride_,

@@ -7,7 +7,11 @@ namespace Shader {
 Program::Program() {}
 
 Program::Program(Program const & program) {
-	this->operator=(program);
+	operator=(program);
+}
+
+Program::Program(Program && program) {
+	operator=(program);
 }
 
 Program & Program::operator=(Program const & program) {
@@ -16,34 +20,67 @@ Program & Program::operator=(Program const & program) {
 	return *this;
 }
 
-Program::Program(std::vector<Shader> & shaders) {
+Program & Program::operator=(Program && program) {
+	contents = program.contents;
+	attached = program.attached;
+	return *this;
+}
+
+Program::Program(std::vector<Shader> & shaders) 
+: Super(glCreateProgram())
+{
 	init(shaders);
 }
 
-Program::Program(std::vector<Shader>&& shaders) {
+Program::Program(std::vector<Shader>&& shaders) 
+: Super(glCreateProgram())
+{
 	init(shaders);
 }
 
 Program::Program(
 	std::vector<std::string> const & vertexShaderCode,
 	std::vector<std::string> const & fragmentShaderCode
-) {
-	std::vector<Shader> shaders = {
+) 
+: Super(glCreateProgram())
+{
+	init(std::vector<Shader>{
 		VertexShader(vertexShaderCode),
 		FragmentShader(fragmentShaderCode),
-	};
-	init(shaders);
+	});
 }
 
-void Program::init(std::vector<Shader> & shaders) {
-	contents = std::make_shared<Contents>(glCreateProgram());
-	for (Shader& shader : shaders) {
+Program::Program(
+	std::vector<std::string> && vertexShaderCode,
+	std::vector<std::string> && fragmentShaderCode
+) 
+: Super(glCreateProgram())
+{
+	init(std::vector<Shader>{
+		VertexShader(vertexShaderCode),
+		FragmentShader(fragmentShaderCode),
+	});
+}
+
+void Program::init(std::vector<Shader> const & shaders) {
+	for (auto const & shader : shaders) {
 		attach(shader);
 	}
 	link();
 
+	//TODO?
 	//store uniform locations
+	//store attribute locations
+}
 
+void Program::init(std::vector<Shader> && shaders) {
+	for (auto const & shader : shaders) {
+		attach(shader);
+	}
+	link();
+
+	//TODO?
+	//store uniform locations
 	//store attribute locations
 }
 

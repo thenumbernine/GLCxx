@@ -7,6 +7,8 @@
 namespace Shader {
 
 struct ProgramWrapperInfo {
+	static constexpr char const * name = "Program";
+
 	static void getivFn(GLuint a, GLenum b, GLint* c) {
 		glGetProgramiv(a,b,c);
 	}
@@ -30,7 +32,9 @@ public:
 	
 	Program();
 	Program(Program const & program);
+	Program(Program && program);
 	Program & operator=(Program const & program);
+	Program & operator=(Program && program);
 
 	Program(std::vector<Shader>& shaders);
 	Program(std::vector<Shader>&& shaders);
@@ -43,8 +47,13 @@ public:
 		std::vector<std::string> const & vertexShaderCode,
 		std::vector<std::string> const & fragmentShaderCode
 	);
+	Program(
+		std::vector<std::string> && vertexShaderCode,
+		std::vector<std::string> && fragmentShaderCode
+	);
 
-	void init(std::vector<Shader> & shaders);
+	void init(std::vector<Shader> const & shaders);
+	void init(std::vector<Shader> && shaders);
 	
 	Program & attach(Shader const & shader);
 	Program & link();

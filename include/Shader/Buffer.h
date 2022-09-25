@@ -7,6 +7,8 @@
 namespace Shader {
 
 struct BufferWrapperInfo {
+	static constexpr char const * name = "Buffer";
+
 	static void getivFn(GLuint a, GLenum b, GLint* c) {
 		throw Common::Exception() << "here";
 		//glGetShaderiv(a,b,c);

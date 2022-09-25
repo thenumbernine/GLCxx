@@ -7,6 +7,8 @@
 namespace Shader {
 
 struct ShaderWrapperInfo {
+	static constexpr char const * name = "Shader";
+	
 	static void getivFn(GLuint a, GLenum b, GLint* c) {
 		glGetShaderiv(a,b,c);
 	}

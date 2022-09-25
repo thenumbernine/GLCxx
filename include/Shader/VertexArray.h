@@ -3,10 +3,13 @@
 #include "Shader/Wrapper.h"
 #include "Shader/Attribute.h"
 #include "GLApp/gl.h"
+#include <vector>
 
 namespace Shader {
 
 struct VertexArrayWrapperInfo {
+	static constexpr char const * name = "VertexArray";
+	
 	static void getivFn(GLuint a, GLenum b, GLint* c) {
 		throw Common::Exception() << "here";
 		//glGetShaderiv(a,b,c);
@@ -28,8 +31,15 @@ struct VertexArray : public Wrapper<VertexArrayWrapperInfo> {
 	std::vector<Attribute> attrs;
 
 	VertexArray();
+	
 	VertexArray(VertexArray const & vao);
+	VertexArray(VertexArray && vao);
+	
 	VertexArray& operator=(VertexArray const & vao);
+	VertexArray& operator=(VertexArray && vao);
+	
+	VertexArray(std::vector<Attribute> const & attrs_);
+	VertexArray(std::vector<Attribute> && attrs_);
 
 	void setAttrs() {
 		bind();

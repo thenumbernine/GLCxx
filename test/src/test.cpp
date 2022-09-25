@@ -32,7 +32,7 @@ struct Test : public ::GLApp::ViewBehavior<::GLApp::GLApp> {
 		Super::init(args);
 		
 		glClearColor(.5, .75, .75, 1.);
-		viewFrustum->dist = 3.;
+		viewFrustum->pos(2) = 3.;
 
 		using float33 = Tensor::Tensor<float, Tensor::Lower<3>, Tensor::Lower<3>>;
 		posBuf = Shader::ArrayBuffer(float33{
@@ -66,9 +66,13 @@ struct Test : public ::GLApp::ViewBehavior<::GLApp::GLApp> {
 		//infer attribute properties from the shader program's attribute info
 		posAttr = Shader::Attribute(*shaderProgram, "pos", &posBuf);
 		colorAttr = Shader::Attribute(*shaderProgram, "color", &colorBuf);
-	
+
+#if 1
 		vao.attrs = {posAttr, colorAttr};
 		vao.setAttrs();
+#else	
+		vao = Shader::VertexArray(std::vector<Shader::Attribute>{posAttr, colorAttr});
+#endif	
 	}
 
 	virtual void onUpdate() {

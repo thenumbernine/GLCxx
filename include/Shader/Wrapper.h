@@ -39,13 +39,24 @@ public:
 	
 	Wrapper(HandleType handleContents)
 	: contents(std::make_shared<Contents>(handleContents))
-	{}
-	
-	Wrapper(const Wrapper& handle) {
-		this->operator=(handle);
+	{
+std::cout << "wrapping " << Info::name << " " << (*this)() << std::endl;
 	}
 	
-	Wrapper& operator=(const Wrapper& handle) {
+	Wrapper(Wrapper const & handle) {
+		operator=(handle);
+	}
+	
+	Wrapper(Wrapper && handle) {
+		operator=(handle);
+	}
+	
+	Wrapper & operator=(Wrapper const & handle) {
+		contents = handle.contents;
+		return *this;
+	}
+	
+	Wrapper & operator=(Wrapper && handle) {
 		contents = handle.contents;
 		return *this;
 	}
