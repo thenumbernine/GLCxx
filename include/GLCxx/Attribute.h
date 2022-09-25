@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Shader/Buffer.h"
-#include "Shader/Program.h"
+#include "GLCxx/Buffer.h"
+#include "GLCxx/Program.h"
 
-namespace Shader {
+namespace GLCxx {
 
 struct Attribute {
 	int type = {};		//GL_FLOAT etc

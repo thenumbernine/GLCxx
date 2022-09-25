@@ -1,7 +1,7 @@
-#include "Shader/Buffer.h"
-#include "GLApp/gl.h"
+#include "GLCxx/Buffer.h"
+#include "GLCxx/gl.h"
 
-namespace Shader {
+namespace GLCxx {
 
 Buffer::Buffer() {}
 

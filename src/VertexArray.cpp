@@ -1,6 +1,7 @@
-#include "Shader/VertexArray.h"
+#include "GLCxx/VertexArray.h"
+#include "GLCxx/gl.h"
 
-namespace Shader {
+namespace GLCxx {
 
 static GLuint genVertexArray() {
 	GLuint id = {};

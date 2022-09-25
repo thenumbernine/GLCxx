@@ -5,11 +5,10 @@ Requires my Common C++ library found [here](https://github.com/thenumbernine/Com
 Example:
 
 ```
-	std::vector<Shader::Shader> shaders = {
-		Shader::VertexShader(vertexShaderCode),
-		Shader::FragmentShader(fragmentShaderCode)
-	};
-	program = std::make_shared<Shader::Program>(shaders);
+	program = std::make_shared<GLCxx::Program>({
+		vertexShaderCode,
+		fragmentShaderCode
+	});
 	program->link()
 		.setUniform<int>("texSampler", 0)
 		.setUniform<float>("alpha", .5)
@@ -21,8 +20,3 @@ Example:
 
 	program->done();
 ```
-
-TODO
-- add in a Texture wrapper class as well
-- and a lot of the other wrappers already present in my js and lua gl libraries.
-- then rename this project from "Shader" to just "GL" or something.

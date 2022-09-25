@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Shader/Wrapper.h"
+#include "GLCxx/Wrapper.h"
 #include <vector>
 #include <string>
 
-namespace Shader {
+namespace GLCxx {
 
 struct ShaderWrapperInfo {
 	static constexpr char const * name = "Shader";

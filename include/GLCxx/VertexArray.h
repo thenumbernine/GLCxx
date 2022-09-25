@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Shader/Wrapper.h"
-#include "Shader/Attribute.h"
-#include "GLApp/gl.h"
+#include "GLCxx/Wrapper.h"
+#include "GLCxx/Attribute.h"
+#include "GLCxx/gl.h"
 #include <vector>
 
-namespace Shader {
+namespace GLCxx {
 
 struct VertexArrayWrapperInfo {
 	static constexpr char const * name = "VertexArray";

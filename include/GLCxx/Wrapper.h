@@ -1,15 +1,13 @@
 #pragma once
 
-#include "GLApp/gl.h"
+#include "GLCxx/gl.h"
 #include "Common/Exception.h"
 #include <string>
 #include <memory>
 #include <vector>
-
-//testing:
 #include <iostream>
 
-namespace Shader {
+namespace GLCxx {
 
 template<typename Info_>
 struct Wrapper {

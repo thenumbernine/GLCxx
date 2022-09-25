@@ -1,10 +1,10 @@
 #pragma once 
 
-#include "Shader/Wrapper.h"
+#include "GLCxx/Wrapper.h"
+#include "GLCxx/gl.h"
 #include "Common/Exception.h"
-#include "GLApp/gl.h"
 
-namespace Shader {
+namespace GLCxx {
 
 struct BufferWrapperInfo {
 	static constexpr char const * name = "Buffer";

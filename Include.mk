@@ -1,5 +1,5 @@
-SHADER_PATH:=$(dir $(lastword $(MAKEFILE_LIST)))
+GLCXX_PATH:=$(dir $(lastword $(MAKEFILE_LIST)))
 
-INCLUDE+=$(SHADER_PATH)include
-DYNAMIC_LIBS+=$(SHADER_PATH)dist/$(PLATFORM)/$(BUILD)/libShader$(LIB_SUFFIX)
+INCLUDE+=$(GLCXX_PATH)include
+DYNAMIC_LIBS+=$(GLCXX_PATH)dist/$(PLATFORM)/$(BUILD)/libShader$(LIB_SUFFIX)
 

@@ -1,10 +1,10 @@
-#include "Shader/Attribute.h"
-#include "Shader/Program.h"
-#include "Shader/Report.h"
-#include "GLApp/gl.h"
+#include "GLCxx/Attribute.h"
+#include "GLCxx/Program.h"
+#include "GLCxx/Report.h"
+#include "GLCxx/gl.h"
 #include <map>
 
-namespace Shader {
+namespace GLCxx {
 
 struct AttributeTypeInfo {
 	int type;

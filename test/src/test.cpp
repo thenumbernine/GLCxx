@@ -1,11 +1,11 @@
-#include "Shader/Program.h"
-#include "Shader/Attribute.h"
-#include "Shader/VertexArray.h"
-#include "Shader/Buffer.h"
-#include "Shader/Report.h"
-#include "GLApp/gl.h"
 #include "GLApp/GLApp.h"
 #include "GLApp/ViewBehavior.h"
+#include "GLCxx/Program.h"
+#include "GLCxx/Attribute.h"
+#include "GLCxx/VertexArray.h"
+#include "GLCxx/Buffer.h"
+#include "GLCxx/Report.h"
+#include "GLCxx/gl.h"
 #include "Tensor/Tensor.h"
 #include "Common/File.h"
 #include <chrono>
@@ -18,17 +18,17 @@ struct Test : public ::GLApp::ViewBehavior<::GLApp::GLApp> {
 	using Clock = std::chrono::high_resolution_clock;
 	std::chrono::time_point<Clock> lastTime = Clock::now();
 	
-	std::shared_ptr<Shader::Program> shaderProgram;
+	std::shared_ptr<GLCxx::Program> shaderProgram;
 	
 	float angle = 0;
 
 	virtual const char* getTitle() {
-		return "Shader Test";
+		return "GLCxx Test";
 	}
 
-	Shader::Buffer posBuf, colorBuf, indexBuf;
-	Shader::Attribute posAttr, colorAttr;
-	Shader::VertexArray vao;
+	GLCxx::Buffer posBuf, colorBuf, indexBuf;
+	GLCxx::Attribute posAttr, colorAttr;
+	GLCxx::VertexArray vao;
 
 	virtual void init(const Init& args) {
 		Super::init(args);
@@ -37,21 +37,21 @@ struct Test : public ::GLApp::ViewBehavior<::GLApp::GLApp> {
 		viewFrustum->pos(2) = 3.;
 
 		using float33 = Tensor::Tensor<float, Tensor::Lower<3>, Tensor::Lower<3>>;
-		posBuf = Shader::ArrayBuffer(float33{
+		posBuf = GLCxx::ArrayBuffer(float33{
 			{0, 1.25, 0},
 			{-1, -.75, 0},
 			{1, -.75, 0}
 		});
-		colorBuf = Shader::ArrayBuffer(float33{
+		colorBuf = GLCxx::ArrayBuffer(float33{
 			{1,0,0},
 			{0,1,0},
 			{0,0,1}
 		});
-		indexBuf = Shader::ElementArrayBuffer(Tensor::uint3{0,1,2});
+		indexBuf = GLCxx::ElementArrayBuffer(Tensor::uint3{0,1,2});
 
 		std::string version = "#version 460\n";
 		std::string shaderCode = Common::File::read("test.shader");
-		shaderProgram = std::make_shared<Shader::Program>(
+		shaderProgram = std::make_shared<GLCxx::Program>(
 			// vertex code
 			std::vector<std::string>{
 				version,	//first
@@ -68,14 +68,14 @@ struct Test : public ::GLApp::ViewBehavior<::GLApp::GLApp> {
 GLREPORT("here");		
 
 		//infer attribute properties from the shader program's attribute info
-		posAttr = Shader::Attribute(*shaderProgram, "pos", &posBuf);
+		posAttr = GLCxx::Attribute(*shaderProgram, "pos", &posBuf);
 GLREPORT("here");		
-		colorAttr = Shader::Attribute(*shaderProgram, "color", &colorBuf);
+		colorAttr = GLCxx::Attribute(*shaderProgram, "color", &colorBuf);
 GLREPORT("here");		
 
 #ifdef USE_VAO
 GLREPORT("here");		
-		vao = Shader::VertexArray(std::vector<Shader::Attribute>{posAttr, colorAttr});
+		vao = GLCxx::VertexArray(std::vector<GLCxx::Attribute>{posAttr, colorAttr});
 GLREPORT("here");		
 		vao.bind();
 GLREPORT("here");		

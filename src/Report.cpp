@@ -1,8 +1,8 @@
-#include "Shader/Report.h"
+#include "GLCxx/Report.h"
 #include <iostream>
 #include <map>
 
-namespace Shader {
+namespace GLCxx {
 
 #define MAKE_PAIR(x)	std::make_pair(x, #x)
 static std::map<GLuint, std::string> errNames = {

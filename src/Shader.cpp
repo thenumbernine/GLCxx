@@ -1,10 +1,11 @@
-#include "Shader/Shader.h"
+#include "GLCxx/Shader.h"
+#include "GLCxx/gl.h"
 #include "Common/Macros.h"
 #include "Common/Exception.h"
 #include <string>
 #include <sstream>
 
-namespace Shader {
+namespace GLCxx {
 
 Shader::Shader() {}
 

@@ -1,8 +1,8 @@
-#include "Shader/Program.h"
+#include "GLCxx/Program.h"
 #include "Common/Exception.h"
 #include <vector>
 
-namespace Shader {
+namespace GLCxx {
 
 Program::Program() {}
 
@@ -102,7 +102,7 @@ Program & Program::link() {
 	if (!linked) {
 		throw Common::Exception() << "failed to link program.\n" << getLog();
 	}
-	for (Shader& shader : attached) {
+	for (auto & shader : attached) {
 		glDetachShader((*this)(), shader());
 	}
 	return *this;

@@ -1,12 +1,12 @@
 #pragma once
 
-#include "GLApp/gl.h"
+#include "GLCxx/gl.h"
 #include <string>
 
-namespace Shader {
+namespace GLCxx {
 
 void report(std::string const & filename, int line, std::string const & msg = "");
 
 }
 
-#define GLREPORT(msg) ::Shader::report(__FILE__, __LINE__, msg)
+#define GLREPORT(msg) ::GLCxx::report(__FILE__, __LINE__, msg)
