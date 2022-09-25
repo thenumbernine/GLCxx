@@ -25,6 +25,10 @@ Buffer & Buffer::operator=(Buffer && buffer) {
 	return *this;
 }
 
+Buffer::Buffer(int target_)
+: Super(genBuffer()), target(target_)
+{}
+
 Buffer::Buffer(int target_, int size, void const * data, int usage)
 : Super(genBuffer()), target(target_)
 {

@@ -38,6 +38,8 @@ struct Buffer : public Wrapper<BufferWrapperInfo> {
 	Buffer& operator=(Buffer const & buffer);
 	Buffer& operator=(Buffer && buffer);
 	
+	Buffer(int target_);
+	
 	Buffer(int target_, int size, void const * data = nullptr, int usage = GL_STATIC_DRAW);
 
 	template<typename T>
