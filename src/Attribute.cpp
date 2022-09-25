@@ -102,9 +102,9 @@ void Attribute::disable() const {
 }
 	
 void Attribute::set() const {
-	if (buffer) buffer->bind();
+	if (buffer()) buffer.bind();
 	setPointer();
-	if (buffer) buffer->unbind();
+	if (buffer()) buffer.unbind();
 }
 
 }

@@ -17,7 +17,7 @@ struct Attribute {
 	int loc = {};		//attribute location of our Program
 
 	//should all Attribute objects *always* have associated Buffer objects?
-	Buffer * buffer = {};
+	Buffer buffer;
 
 	Attribute() {}
 	
@@ -29,7 +29,7 @@ struct Attribute {
 		bool normalize_,
 		int arraySize_,
 		int loc_,
-		Buffer * buffer_ = {}
+		Buffer buffer_ = {}
 	) :	type(type_),
 		size(size_),
 		stride(stride_),
@@ -43,7 +43,7 @@ struct Attribute {
 	Attribute(
 		Program const & program,
 		int loc_,
-		Buffer * buffer_ = {}
+		Buffer buffer_ = {}
 	) : loc(loc_),
 		buffer(buffer_)
 	{
@@ -53,7 +53,7 @@ struct Attribute {
 	Attribute(
 		Program const & program,
 		std::string const & name,
-		Buffer * buffer_ = {}
+		Buffer buffer_ = {}
 	) : loc(program.getAttribLocation(name)),
 		buffer(buffer_)
 	{

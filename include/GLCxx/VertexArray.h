@@ -35,53 +35,76 @@ struct VertexArray : public Wrapper<VertexArrayWrapperInfo> {
 	VertexArray(VertexArray const & vao);
 	VertexArray(VertexArray && vao);
 	
-	VertexArray& operator=(VertexArray const & vao);
-	VertexArray& operator=(VertexArray && vao);
+	VertexArray & operator=(VertexArray const & vao);
+	VertexArray & operator=(VertexArray && vao);
 	
 	VertexArray(std::vector<Attribute> const & attrs_);
 	VertexArray(std::vector<Attribute> && attrs_);
+	
+	VertexArray(std::vector<Attribute> const & attrs_, Buffer const & indexBuffer);
+	VertexArray(std::vector<Attribute> && attrs_, Buffer const & indexBuffer);
 
-	void setAttrs() {
-		bind();
+	VertexArray & setAttrs() {
 		for (auto const & attr : attrs) {
 			attr.set();
 		}
-		unbind();
+		return *this;
+	}
+
+	VertexArray const & setAttrs() const {
+		for (auto const & attr : attrs) {
+			attr.set();
+		}
+		return *this;
+	}
+
+	VertexArray & bind() {
+		glBindVertexArray((*this)());
+		return *this;
 	}
 	
-	void bind() const {
+	VertexArray const & bind() const {
 		glBindVertexArray((*this)());
+		return *this;
 	}
 
-	void unbind() const {
+	VertexArray & unbind() {
 		glBindVertexArray(0);
+		return *this;
+	}
+	
+	VertexArray const & unbind() const {
+		glBindVertexArray(0);
+		return *this;
 	}
 
-	void enableAttrs() const {
+	VertexArray & enableAttrs() {
 		for (auto const & attr : attrs) {
 			attr.enable();
 		}
+		return *this;
+	}
+	
+	VertexArray const & enableAttrs() const {
+		for (auto const & attr : attrs) {
+			attr.enable();
+		}
+		return *this;
 	}
 
-	void disableAttrs() const {
+	VertexArray & disableAttrs() {
 		for (auto const & attr : attrs) {
 			attr.disable();
 		}
+		return *this;
 	}
 
-	// shorthand for bind + enableAttrs
-	void use() const {
-		bind();
-		enableAttrs();
+	VertexArray const & disableAttrs() const {
+		for (auto const & attr : attrs) {
+			attr.disable();
+		}
+		return *this;
 	}
-
-	// shorthand for unbind + disableAttrs
-	void useNone() const {
-		disableAttrs();
-		unbind();
-	}
-
-
 };
 
 }
