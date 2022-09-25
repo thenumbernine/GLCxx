@@ -18,7 +18,7 @@ struct Test : public ::GLApp::ViewBehavior<::GLApp::GLApp> {
 	using Clock = std::chrono::high_resolution_clock;
 	std::chrono::time_point<Clock> lastTime = Clock::now();
 	
-	std::shared_ptr<GLCxx::Program> shaderProgram;
+	GLCxx::Program shaderProgram;
 	
 	float angle = 0;
 
@@ -57,7 +57,7 @@ struct Test : public ::GLApp::ViewBehavior<::GLApp::GLApp> {
 
 		std::string version = "#version 460\n";
 		std::string shaderCode = Common::File::read("test.shader");
-		shaderProgram = std::make_shared<GLCxx::Program>(
+		shaderProgram = GLCxx::Program(
 			// vertex code
 			std::vector<std::string>{
 				version,	//first
@@ -75,12 +75,12 @@ struct Test : public ::GLApp::ViewBehavior<::GLApp::GLApp> {
 		using float33 = Tensor::Tensor<float, Tensor::Lower<3>, Tensor::Lower<3>>;
 		vao = GLCxx::VertexArray(std::vector<GLCxx::Attribute>{
 				//infer attribute properties from the shader program's attribute info
-				GLCxx::Attribute(*shaderProgram, "pos", GLCxx::ArrayBuffer(float33{
+				GLCxx::Attribute(shaderProgram, "pos", GLCxx::ArrayBuffer(float33{
 					{0, 1.25, 0},
 					{-1, -.75, 0},
 					{1, -.75, 0}
 				})),
-				GLCxx::Attribute(*shaderProgram, "color", GLCxx::ArrayBuffer(float33{
+				GLCxx::Attribute(shaderProgram, "color", GLCxx::ArrayBuffer(float33{
 					{1,0,0},
 					{0,1,0},
 					{0,0,1}
@@ -100,13 +100,14 @@ struct Test : public ::GLApp::ViewBehavior<::GLApp::GLApp> {
 		glMatrixMode(GL_MODELVIEW);
 		glRotatef(angle,0,1,0);
 		
-		shaderProgram->use();
+		shaderProgram.use();
 	
-		float m[16];
-		glGetFloatv(GL_PROJECTION_MATRIX, m);
-		glUniformMatrix4fv(shaderProgram->getUniformLocation("projectionMatrix"), 1, GL_FALSE, m);
-		glGetFloatv(GL_MODELVIEW_MATRIX, m);
-		glUniformMatrix4fv(shaderProgram->getUniformLocation("modelViewMatrix"), 1, GL_FALSE, m);
+		float projMat[16];
+		float mvMat[16];
+		glGetFloatv(GL_PROJECTION_MATRIX, projMat);
+		glGetFloatv(GL_MODELVIEW_MATRIX, mvMat);
+		glUniformMatrix4fv(shaderProgram.getUniformLocation("projectionMatrix"), 1, GL_FALSE, projMat);
+		glUniformMatrix4fv(shaderProgram.getUniformLocation("modelViewMatrix"), 1, GL_FALSE, mvMat);
 		
 		tex.bind();
 		vao.bind();
@@ -114,7 +115,7 @@ struct Test : public ::GLApp::ViewBehavior<::GLApp::GLApp> {
 		vao.unbind();
 		tex.bind();
 		
-		shaderProgram->done();
+		shaderProgram.done();
 		
 		angle += deltaTime * 360;	//1 revolution per second
 	}

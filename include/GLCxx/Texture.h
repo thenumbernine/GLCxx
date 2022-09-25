@@ -91,11 +91,35 @@ struct Texture : public Wrapper<TextureWrapperInfo> {
 		int border = {}
 	);
 
-	template<int k>
-	Texture const & setParam(float v) const {
-		glTexParameterf(target, k, v);
-		return *this;
-	}
+	template<GLenum pname>	Texture const	& setParam(GLfloat param) 						const	{ glTexParameterf(target, pname, param); return *this; }
+	template<GLenum pname>	Texture 		& setParam(GLfloat param) 								{ glTexParameterf(target, pname, param); return *this; }
+							Texture const	& setParam(GLenum const pname, GLfloat param)	const	{ glTexParameterf(target, pname, param); return *this; }
+							Texture 	 	& setParam(GLenum const pname, GLfloat param) 			{ glTexParameterf(target, pname, param); return *this; }
+	
+	template<GLenum pname>	Texture const	& setParam(GLint param)							const	{ glTexParameteri(target, pname, param); return *this; }
+	template<GLenum pname>	Texture 		& setParam(GLint param) 	   							{ glTexParameteri(target, pname, param); return *this; }
+							Texture const	& setParam(GLenum const pname, GLint param) 	const	{ glTexParameteri(target, pname, param); return *this; }
+							Texture 	 	& setParam(GLenum const pname, GLint param) 			{ glTexParameteri(target, pname, param); return *this; }
+
+	template<GLenum pname>	Texture const	& setParam(GLfloat const * param) 						const	{ glTexParameterfv(target, pname, param); return *this; }
+	template<GLenum pname>	Texture 		& setParam(GLfloat const * param) 								{ glTexParameterfv(target, pname, param); return *this; }
+							Texture const	& setParam(GLenum const pname, GLfloat const * param)	const	{ glTexParameterfv(target, pname, param); return *this; }
+							Texture 	 	& setParam(GLenum const pname, GLfloat const * param) 			{ glTexParameterfv(target, pname, param); return *this; }
+	
+	template<GLenum pname>	Texture const	& setParam(GLint const * param)							const	{ glTexParameteriv(target, pname, param); return *this; }
+	template<GLenum pname>	Texture 		& setParam(GLint const * param) 	   							{ glTexParameteriv(target, pname, param); return *this; }
+							Texture const	& setParam(GLenum const pname, GLint const * param) 	const	{ glTexParameteriv(target, pname, param); return *this; }
+							Texture 	 	& setParam(GLenum const pname, GLint const * param) 			{ glTexParameteriv(target, pname, param); return *this; }
+	
+	template<GLenum pname>	Texture const	& setParamI(GLint const * param)						const	{ glTexParameterIiv(target, pname, param); return *this; }
+	template<GLenum pname>	Texture 		& setParamI(GLint const * param) 	   							{ glTexParameterIiv(target, pname, param); return *this; }
+							Texture const	& setParamI(GLenum const pname, GLint const * param) 	const	{ glTexParameterIiv(target, pname, param); return *this; }
+							Texture 	 	& setParamI(GLenum const pname, GLint const * param) 			{ glTexParameterIiv(target, pname, param); return *this; }
+	
+	template<GLenum pname>	Texture const	& setParamIu(GLuint const * param)						const	{ glTexParameterIuiv(target, pname, param); return *this; }
+	template<GLenum pname>	Texture 		& setParamIu(GLuint const * param) 	   							{ glTexParameterIuiv(target, pname, param); return *this; }
+							Texture const	& setParamIu(GLenum const pname, GLuint const * param) 	const	{ glTexParameterIuiv(target, pname, param); return *this; }
+							Texture 	 	& setParamIu(GLenum const pname, GLuint const * param) 			{ glTexParameterIuiv(target, pname, param); return *this; }
 
 	//can't default-initialize these to member-variables, so I guess I gotta make a lot of overrides
 	Texture const & subImage2D(
