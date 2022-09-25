@@ -71,6 +71,7 @@ public:
 		return result;
 	}
 
+	//used by Shader and Program
 	std::string getLog() const {
 		GLint length = geti<GL_INFO_LOG_LENGTH>();
 std::cout << "log length: " << length << std::endl;		
