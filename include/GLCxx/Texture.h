@@ -172,13 +172,13 @@ struct Texture : public Wrapper<TextureWrapperInfo> {
 		int xoffset,
 		int yoffset
 	) const {
-		return subImage2D(data, xoffset, yoffset, size(0), size(1), format, type, target);
+		return subImage2D(data, xoffset, yoffset, size.x, size.y, format, type, target);
 	}
 
 	Texture const & subImage2D(
 		void * data
 	) const {
-		return subImage2D(data, 0, 0, size(0), size(1), format, type, target);
+		return subImage2D(data, 0, 0, size.x, size.y, format, type, target);
 	}
 
 	Texture const & generateMipmap() const;
