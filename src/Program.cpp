@@ -62,6 +62,30 @@ Program::Program(
 	});
 }
 
+Program::Program(
+	std::string const & vertexShaderCode,
+	std::string const & fragmentShaderCode
+) 
+: Super(glCreateProgram())
+{
+	init(std::vector<Shader>{
+		VertexShader(std::vector<std::string>{vertexShaderCode}),
+		FragmentShader(std::vector<std::string>{fragmentShaderCode}),
+	});
+}
+
+Program::Program(
+	std::string && vertexShaderCode,
+	std::string && fragmentShaderCode
+) 
+: Super(glCreateProgram())
+{
+	init(std::vector<Shader>{
+		VertexShader(std::vector<std::string>{vertexShaderCode}),
+		FragmentShader(std::vector<std::string>{fragmentShaderCode}),
+	});
+}
+
 void Program::init(std::vector<Shader> const & shaders) {
 	for (auto const & shader : shaders) {
 		attach(shader);

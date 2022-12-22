@@ -51,7 +51,15 @@ public:
 		std::vector<std::string> && vertexShaderCode,
 		std::vector<std::string> && fragmentShaderCode
 	);
-
+	Program(
+		std::string const & vertexShaderCode,
+		std::string const & fragmentShaderCode
+	);
+	Program(
+		std::string && vertexShaderCode,
+		std::string && fragmentShaderCode
+	);
+	
 	void init(std::vector<Shader> const & shaders);
 	void init(std::vector<Shader> && shaders);
 	

@@ -1,3 +1,9 @@
 distName='test'
 distType='app'
 depends:append{'../../Common', '../../Image', '../../Tensor', '../../GLApp', '..'}
+
+-- [[
+compiler = 'clang++'
+linker = 'clang++'
+compileFlags=compileFlags..' -ftemplate-backtrace-limit=0 '
+--]]

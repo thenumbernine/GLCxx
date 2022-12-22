@@ -49,6 +49,14 @@ struct Buffer : public Wrapper<BufferWrapperInfo> {
 		setData(sizeof(T), &t, usage);
 	}
 
+	// will this specialized overload be hit before the generic T case?
+	// or will this cause "ambiguous resolution" errors?
+	// so far outlook not so good
+	template<typename T>
+	Buffer(int target_, std::vector<T> & t, int usage = GL_STATIC_DRAW) {
+		setData(t.size() * sizeof(T[0]), t.data(), usage);
+	}
+
 	void setData(int size, void const * data, int usage = GL_STATIC_DRAW) const;
 	void updateData(int size, void const * data, int offset = 0) const;
 	
