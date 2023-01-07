@@ -1,6 +1,13 @@
 distName='test'
 distType='app'
-depends:append{'../../Common', '../../Image', '../../Tensor', '../../GLApp', '..'}
+depends:append{
+	'../../Common',
+	'../../Image',
+	'../../Tensor',
+	'../../GLApp',
+	'../../SDLApp',
+	'..',
+}
 
 -- [[
 compiler = 'clang++'

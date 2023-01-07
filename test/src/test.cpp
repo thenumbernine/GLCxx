@@ -22,7 +22,7 @@ struct Test : public ::GLApp::ViewBehavior<::GLApp::GLApp> {
 	
 	float angle = 0;
 
-	virtual const char* getTitle() {
+	virtual std::string getTitle() {
 		return "GLCxx Test";
 	}
 
