@@ -26,10 +26,10 @@ struct Program : public Wrapper<ProgramWrapperInfo> {
 	using Super = Wrapper;
 
 protected:
-	//all attached shaders 
+	//all attached shaders
 	std::list<Shader> attached;
 public:
-	
+
 	Program();
 	Program(Program const & program);
 	Program(Program && program);
@@ -38,7 +38,7 @@ public:
 
 	Program(std::vector<Shader>& shaders);
 	Program(std::vector<Shader>&& shaders);
-	
+
 	// alright shorthand ...
 	// should I provide a vector-of-vectors-of-strings to pass into VertexShader and FragmentShader?
 	// or a 2-param list of vector-of-strings to pass to VertexShader and FragmentShader?
@@ -59,10 +59,10 @@ public:
 		std::string && vertexShaderCode,
 		std::string && fragmentShaderCode
 	);
-	
+
 	void init(std::vector<Shader> const & shaders);
 	void init(std::vector<Shader> && shaders);
-	
+
 	Program & attach(Shader const & shader);
 	Program & link();
 
@@ -80,6 +80,8 @@ public:
 	template<typename T> Program & setUniform(std::string const & name, T value);
 	template<typename T> Program & setUniform(std::string const & name, T value1, T value2);
 	template<typename T> Program & setUniform(std::string const & name, T value1, T value2, T value3);
+
+	static std::string getVersionPragma();
 };
 
 }

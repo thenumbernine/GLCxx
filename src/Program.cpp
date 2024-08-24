@@ -1,6 +1,7 @@
 #include "GLCxx/Program.h"
 #include "Common/Exception.h"
 #include <vector>
+#include <regex>
 
 namespace GLCxx {
 
@@ -26,13 +27,13 @@ Program & Program::operator=(Program && program) {
 	return *this;
 }
 
-Program::Program(std::vector<Shader> & shaders) 
+Program::Program(std::vector<Shader> & shaders)
 : Super(glCreateProgram())
 {
 	init(shaders);
 }
 
-Program::Program(std::vector<Shader>&& shaders) 
+Program::Program(std::vector<Shader>&& shaders)
 : Super(glCreateProgram())
 {
 	init(shaders);
@@ -41,7 +42,7 @@ Program::Program(std::vector<Shader>&& shaders)
 Program::Program(
 	std::vector<std::string> const & vertexShaderCode,
 	std::vector<std::string> const & fragmentShaderCode
-) 
+)
 : Super(glCreateProgram())
 {
 	init(std::vector<Shader>{
@@ -53,7 +54,7 @@ Program::Program(
 Program::Program(
 	std::vector<std::string> && vertexShaderCode,
 	std::vector<std::string> && fragmentShaderCode
-) 
+)
 : Super(glCreateProgram())
 {
 	init(std::vector<Shader>{
@@ -65,7 +66,7 @@ Program::Program(
 Program::Program(
 	std::string const & vertexShaderCode,
 	std::string const & fragmentShaderCode
-) 
+)
 : Super(glCreateProgram())
 {
 	init(std::vector<Shader>{
@@ -77,7 +78,7 @@ Program::Program(
 Program::Program(
 	std::string && vertexShaderCode,
 	std::string && fragmentShaderCode
-) 
+)
 : Super(glCreateProgram())
 {
 	init(std::vector<Shader>{
@@ -121,7 +122,7 @@ Program & Program::link() {
 	if (status != 0) throw Common::Exception() << "won't link, program " << (*this)() << " already has link status " << status;
 
 	glLinkProgram((*this)());
-	
+
 	GLint linked = geti<GL_LINK_STATUS>();
 	if (!linked) {
 		throw Common::Exception() << "failed to link program.\n" << getLog();
@@ -173,37 +174,40 @@ int Program::getAttribLocation(std::string const & name) const {
 
 template<>
 Program & Program::setUniform<int>(std::string const & name, int value) {
-	use();
 	glUniform1i(getUniformLocation(name), value);
 	return *this;
 }
 
 template<>
 Program & Program::setUniform<bool>(std::string const & name, bool value) {
-	use();
 	glUniform1i(getUniformLocation(name), value);
 	return *this;
 }
 
 template<>
 Program & Program::setUniform<float>(std::string const & name, float value) {
-	use();
 	glUniform1f(getUniformLocation(name), value);
 	return *this;
 }
 
 template<>
 Program & Program::setUniform<float>(std::string const & name, float value1, float value2) {
-	use();
 	glUniform2f(getUniformLocation(name), value1, value2);
 	return *this;
 }
 
 template<>
 Program & Program::setUniform<float>(std::string const & name, float value1, float value2, float value3) {
-	use();
 	glUniform3f(getUniformLocation(name), value1, value2, value3);
 	return *this;
+}
+
+std::string Program::getVersionPragma() {
+	auto strptr = glGetString(GL_SHADING_LANGUAGE_VERSION);
+	if (strptr == nullptr) throw Common::Exception() << "failed to get GL_SHADING_LANGUAGE_VERSION";
+	auto version = std::string((char const *)strptr);
+	version = std::regex_replace(version, std::regex("\\."), "");
+	return std::string("#version ")+version;
 }
 
 };
