@@ -1,12 +1,12 @@
 #ifdef VERTEX_SHADER
-uniform mat4 modelViewMatrix, projectionMatrix;
+uniform mat4 mvMat, projMat;
 in vec3 pos, color;
 out vec2 posv;
 out vec4 colorv;
 void main() {
 	posv = pos.xy;
-	vec4 vtxWorld = modelViewMatrix * vec4(pos, 1.);
-	gl_Position = projectionMatrix * vtxWorld;
+	vec4 vtxWorld = mvMat * vec4(pos, 1.);
+	gl_Position = projMat * vtxWorld;
 	colorv = vec4(color, 1.) + sin(30. * vtxWorld);
 }
 #endif	//VERTEX_SHADER
@@ -15,7 +15,7 @@ void main() {
 in vec2 posv;
 in vec4 colorv;
 out vec4 colorf;
-layout(binding=0) uniform sampler2D tex;
+uniform sampler2D tex;
 void main() {
 	vec2 texcoord = posv.xy;
 	vec4 texcolor = texture(tex, texcoord);

@@ -8,30 +8,29 @@
 #include "GLCxx/Report.h"
 #include "GLCxx/gl.h"
 #include "Image/Image.h"
-#include "Tensor/Vector.h"
+#include "Tensor/Tensor.h"
 #include "Common/File.h"
 #include <chrono>
 
 struct Test : public ::GLApp::ViewBehavior<::GLApp::GLApp> {
 	using Super = ::GLApp::ViewBehavior<::GLApp::GLApp>;
-	
+
 	using Clock = std::chrono::high_resolution_clock;
 	std::chrono::time_point<Clock> lastTime = Clock::now();
-	
+
 	GLCxx::Program shaderProgram;
-	
+	GLCxx::Texture tex;
+	GLCxx::VertexArray vao;
+
 	float angle = 0;
 
 	virtual std::string getTitle() const {
 		return "GLCxx Test";
 	}
 
-	GLCxx::Texture tex;
-	GLCxx::VertexArray vao;
-
 	virtual void init(const Init& args) {
 		Super::init(args);
-		
+
 		glClearColor(.5, .75, .75, 1.);
 		viewFrustum->pos.z = 3.;
 
@@ -55,22 +54,26 @@ struct Test : public ::GLApp::ViewBehavior<::GLApp::GLApp> {
 			.setParam<GL_TEXTURE_WRAP_T>(GL_REPEAT)
 			.unbind();
 
-		std::string version = "#version 460\n";
+		//std::string glslVersion = "#version 460\n";
+		//osx is dumb.
+		// TODO version=latest like in the lua framework
+		std::string glslVersion = "#version 410\n";
 		std::string shaderCode = Common::File::read("test.shader");
 		shaderProgram = GLCxx::Program(
 			// vertex code
 			std::vector<std::string>{
-				version,	//first
+				glslVersion,	//first
 				"#define VERTEX_SHADER\n",
 				shaderCode,
 			},
 			// fragment code
 			std::vector<std::string>{
-				version,	//first
+				glslVersion,	//first
 				"#define FRAGMENT_SHADER\n",
 				shaderCode,
 			}
 		);
+		shaderProgram.setUniform<int>("tex", 0);
 
 		vao = GLCxx::VertexArray(std::vector<GLCxx::Attribute>{
 				//infer attribute properties from the shader program's attribute info
@@ -90,32 +93,26 @@ struct Test : public ::GLApp::ViewBehavior<::GLApp::GLApp> {
 	}
 
 	virtual void onUpdate() {
-
 		std::chrono::time_point<Clock> thisTime = Clock::now();
 		float deltaTime = 1e-9 * (double)std::chrono::duration_cast<std::chrono::nanoseconds>(thisTime - lastTime).count();
 		lastTime = thisTime;
-		
+
 		Super::onUpdate();
-		glMatrixMode(GL_MODELVIEW);
-		glRotatef(angle,0,1,0);
 		
 		shaderProgram.use();
-	
-		float projMat[16];
-		float mvMat[16];
-		glGetFloatv(GL_PROJECTION_MATRIX, projMat);
-		glGetFloatv(GL_MODELVIEW_MATRIX, mvMat);
-		glUniformMatrix4fv(shaderProgram.getUniformLocation("projectionMatrix"), 1, GL_FALSE, projMat);
-		glUniformMatrix4fv(shaderProgram.getUniformLocation("modelViewMatrix"), 1, GL_FALSE, mvMat);
 		
+		view->mvMat = view->mvMat * Tensor::rotate<float>(angle, Tensor::float3(0, 1, 0));
+		glUniformMatrix4fv(shaderProgram.getUniformLocation("projMat"), 1, GL_TRUE, &view->projMat.x.x);
+		glUniformMatrix4fv(shaderProgram.getUniformLocation("mvMat"), 1, GL_TRUE, &view->mvMat.x.x);
+
 		tex.bind();
 		vao.bind();
 		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
 		vao.unbind();
 		tex.bind();
-		
+
 		shaderProgram.done();
-		
+
 		angle += deltaTime * 360;	//1 revolution per second
 	}
 };
