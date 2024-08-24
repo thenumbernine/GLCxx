@@ -46,7 +46,6 @@ struct Test : public ::GLApp::ViewBehavior<::GLApp::GLApp> {
 
 		//TODO Texture create2D via ctor, and create2D via Image
 		tex = GLCxx::Texture2D()
-			.bind()
 			.create2D(image.getSize().x, image.getSize().y, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, image.getGrid()->v)
 			.setParam<GL_TEXTURE_MIN_FILTER>(GL_NEAREST)
 			.setParam<GL_TEXTURE_MAG_FILTER>(GL_LINEAR)
