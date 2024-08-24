@@ -1,3 +1,7 @@
 distName='GLCxx'
 distType='lib'
 depends:append{'../Common', '../Tensor'}
+
+if platform == 'osx' then
+	macros:insert'GL_SILENCE_DEPRECATION'
+end

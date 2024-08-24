@@ -2,11 +2,15 @@
 
 #if PLATFORM_OSX
 
+#if 0
 //for GLhandleARB, etc
 #include <OpenGL/OpenGL.h>
 #include <OpenGL/glext.h>
-
 #include <OpenGL/gl.h>
+#else
+#include <OpenGL/gl3.h>
+#endif
+
 
 #elif PLATFORM_LINUX
 
