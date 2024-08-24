@@ -77,9 +77,92 @@ public:
 	int getUniformLocation(std::string const & name) const;
 	int getAttribLocation(std::string const & name) const;
 
-	template<typename T> Program & setUniform(std::string const & name, T value);
-	template<typename T> Program & setUniform(std::string const & name, T value1, T value2);
-	template<typename T> Program & setUniform(std::string const & name, T value1, T value2, T value3);
+	// uniform templates...
+	// TODO Tensor implementations of these:
+
+	template<typename T>
+	Program & setUniform(std::string const & name, T value1) {
+		if constexpr (std::is_integral_v<T>) {
+			glUniform1i(getUniformLocation(name), value1);
+		} else if constexpr (std::is_floating_point_v<T>) {
+			glUniform1f(getUniformLocation(name), value1);
+		} else {
+			throw Common::Exception() << "this should be a static_assert failure but C++ meh";
+		}
+		return *this;
+	}
+
+	template<typename T>
+	Program & setUniform(std::string const & name, T value1, T value2) {
+		if constexpr (std::is_integral_v<T>) {
+			glUniform2i(getUniformLocation(name), value1, value2);
+		} else if constexpr (std::is_floating_point_v<T>) {
+			glUniform2f(getUniformLocation(name), value1, value2);
+		} else {
+			throw Common::Exception() << "this should be a static_assert failure but C++ meh";
+		}
+		return *this;
+	}
+
+	template<typename T>
+	Program & setUniform(std::string const & name, T value1, T value2, T value3) {
+		if constexpr (std::is_integral_v<T>) {
+			glUniform3i(getUniformLocation(name), value1, value2, value3);
+		} else if constexpr (std::is_floating_point_v<T>) {
+			glUniform3f(getUniformLocation(name), value1, value2, value3);
+		} else {
+			throw Common::Exception() << "this should be a static_assert failure but C++ meh";
+		}
+		return *this;
+	}
+
+	template<typename T>
+	Program & setUniform(std::string const & name, T value1, T value2, T value3, T value4) {
+		if constexpr (std::is_integral_v<T>) {
+			glUniform4i(getUniformLocation(name), value1, value2, value3, value4);
+		} else if constexpr (std::is_floating_point_v<T>) {
+			glUniform4f(getUniformLocation(name), value1, value2, value3, value4);
+		} else {
+			throw Common::Exception() << "this should be a static_assert failure but C++ meh";
+		}
+		return *this;
+	}
+
+
+	// If you don't mind runtime then a TODO could be to lookup the uniform type and call glUniformMatrix if it's a matrix, or glUniform otherwise
+	// This is pretty much what the Lua framework does.
+
+	template<int dim, typename T>
+	Program & setUniformMatrix(std::string const & name, T const * const value, bool transpose = false, int count = 1) {
+		if constexpr (dim == 2) {
+			// I guess uniform matrix is only for float and double ...
+			if constexpr (std::is_same_v<T, float>) {
+				glUniformMatrix2fv(getUniformLocation(name), count, transpose, value);
+			} else if constexpr (std::is_same_v<T, double>) {
+				glUniformMatrix2dv(getUniformLocation(name), count, transpose, value);
+			} else {
+				throw Common::Exception() << "this should be a static_assert failure but C++ meh";
+			}
+		} else if constexpr (dim == 3) {
+			// I guess uniform matrix is only for float and double ...
+			if constexpr (std::is_same_v<T, float>) {
+				glUniformMatrix3fv(getUniformLocation(name), count, transpose, value);
+			} else if constexpr (std::is_same_v<T, double>) {
+				glUniformMatrix3dv(getUniformLocation(name), count, transpose, value);
+			} else {
+				throw Common::Exception() << "this should be a static_assert failure but C++ meh";
+			}
+		} else if constexpr (dim == 4) {
+			if constexpr (std::is_same_v<T, float>) {
+				glUniformMatrix4fv(getUniformLocation(name), count, transpose, value);
+			} else if constexpr (std::is_same_v<T, double>) {
+				glUniformMatrix4dv(getUniformLocation(name), count, transpose, value);
+			} else {
+				throw Common::Exception() << "this should be a static_assert failure but C++ meh";
+			}
+		}
+		return *this;
+	}
 
 	static std::string getVersionPragma();
 };

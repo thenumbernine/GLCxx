@@ -172,36 +172,6 @@ int Program::getAttribLocation(std::string const & name) const {
 	return glGetAttribLocation((*this)(), name.c_str());
 }
 
-template<>
-Program & Program::setUniform<int>(std::string const & name, int value) {
-	glUniform1i(getUniformLocation(name), value);
-	return *this;
-}
-
-template<>
-Program & Program::setUniform<bool>(std::string const & name, bool value) {
-	glUniform1i(getUniformLocation(name), value);
-	return *this;
-}
-
-template<>
-Program & Program::setUniform<float>(std::string const & name, float value) {
-	glUniform1f(getUniformLocation(name), value);
-	return *this;
-}
-
-template<>
-Program & Program::setUniform<float>(std::string const & name, float value1, float value2) {
-	glUniform2f(getUniformLocation(name), value1, value2);
-	return *this;
-}
-
-template<>
-Program & Program::setUniform<float>(std::string const & name, float value1, float value2, float value3) {
-	glUniform3f(getUniformLocation(name), value1, value2, value3);
-	return *this;
-}
-
 std::string Program::getVersionPragma() {
 	auto strptr = glGetString(GL_SHADING_LANGUAGE_VERSION);
 	if (strptr == nullptr) throw Common::Exception() << "failed to get GL_SHADING_LANGUAGE_VERSION";

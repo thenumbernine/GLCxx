@@ -54,23 +54,38 @@ struct Test : public ::GLApp::ViewBehavior<::GLApp::GLApp> {
 			.setParam<GL_TEXTURE_WRAP_T>(GL_REPEAT)
 			.unbind();
 
-		//std::string glslVersion = "#version 460\n";
-		//osx is dumb.
-		// TODO version=latest like in the lua framework
-		std::string glslVersion = "#version 410\n";
-		std::string shaderCode = Common::File::read("test.shader");
+		std::string glslVersion = ::GLCxx::Program::getVersionPragma();
 		shaderProgram = GLCxx::Program(
 			// vertex code
 			std::vector<std::string>{
 				glslVersion,	//first
-				"#define VERTEX_SHADER\n",
-				shaderCode,
+				R"(
+uniform mat4 mvMat, projMat;
+in vec3 pos, color;
+out vec2 posv;
+out vec4 colorv;
+void main() {
+	posv = pos.xy;
+	vec4 vtxWorld = mvMat * vec4(pos, 1.);
+	gl_Position = projMat * vtxWorld;
+	colorv = vec4(color, 1.) + sin(30. * vtxWorld);
+}
+)",
 			},
 			// fragment code
 			std::vector<std::string>{
 				glslVersion,	//first
-				"#define FRAGMENT_SHADER\n",
-				shaderCode,
+				R"(
+in vec2 posv;
+in vec4 colorv;
+out vec4 colorf;
+uniform sampler2D tex;
+void main() {
+	vec2 texcoord = posv.xy;
+	vec4 texcolor = texture(tex, texcoord);
+	colorf = colorv * texcolor + .1 * sin(gl_FragCoord / 5.);
+}
+)",
 			}
 		);
 		shaderProgram.setUniform<int>("tex", 0);
@@ -98,12 +113,13 @@ struct Test : public ::GLApp::ViewBehavior<::GLApp::GLApp> {
 		lastTime = thisTime;
 
 		Super::onUpdate();
-		
-		shaderProgram.use();
-		
+
 		view->mvMat = view->mvMat * Tensor::rotate<float>(angle, Tensor::float3(0, 1, 0));
-		glUniformMatrix4fv(shaderProgram.getUniformLocation("projMat"), 1, GL_TRUE, &view->projMat.x.x);
-		glUniformMatrix4fv(shaderProgram.getUniformLocation("mvMat"), 1, GL_TRUE, &view->mvMat.x.x);
+
+		shaderProgram
+			.use()
+			.setUniformMatrix<4>("projMat", &view->projMat.x.x, true)
+			.setUniformMatrix<4>("mvMat", &view->mvMat.x.x, true);
 
 		tex.bind();
 		vao.bind();
